@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP einrichten (für composer)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          extensions: openssl, mbstring, json
+          coverage: none
+
+      - name: Produktiv-Abhängigkeiten installieren
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Plugin-ZIP erstellen
+        run: bash bin/build.sh
+
+      - name: Plugin-Version ermitteln
+        id: version
+        run: |
+          VERSION=$(grep "Version:" oidc-client.php | awk '{print $NF}')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: GitHub Release erstellen
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "OIDC Client v${{ steps.version.outputs.version }}"
+          body: |
+            Release der Version **${{ steps.version.outputs.version }}**.
+            Alle Änderungen findest du im [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md).
+          files: dist/oidc-client-${{ steps.version.outputs.version }}.zip
+          draft: false
+          prerelease: false

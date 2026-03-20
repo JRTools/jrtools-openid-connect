@@ -1,0 +1,44 @@
+/* OIDC Client – Admin-Styles (Login-Log + Rollen-Mapping) */
+
+/* Login-Log Tabelle */
+.oidc-log-table {
+    margin-top: 12px;
+    border-collapse: collapse;
+}
+
+.oidc-log-table th,
+.oidc-log-table td {
+    padding: 8px 12px;
+    vertical-align: middle;
+}
+
+.oidc-log-success {
+    color: #00a32a;
+    font-weight: 500;
+}
+
+.oidc-log-failure {
+    color: #d63638;
+    font-weight: 500;
+}
+
+/* Rollen-Mapping Tabelle */
+#oidc-role-mapping-table {
+    margin-bottom: 8px;
+    border-collapse: collapse;
+}
+
+#oidc-role-mapping-table th,
+#oidc-role-mapping-table td {
+    padding: 6px 10px;
+    vertical-align: middle;
+}
+
+#oidc-role-mapping-table thead th {
+    background: #f6f7f7;
+    font-weight: 600;
+}
+
+#oidc-role-mapping-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}

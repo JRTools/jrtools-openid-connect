@@ -1,0 +1,617 @@
+# Copyright (C) 2024 OIDC Client
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: OIDC Client 1.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/example/oidc-client/issues\n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2026-03-20 00:00+0000\n"
+"Last-Translator: OIDC Client Team\n"
+"Language-Team: French (France)\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit\n"
+"X-Domain: oidc-client\n"
+
+#: includes/class-oidc-log.php
+msgid "OIDC Login-Log"
+msgstr "Journal de connexion OIDC"
+
+#: includes/class-oidc-log.php
+msgid "Keine Berechtigung."
+msgstr "Accès refusé."
+
+#. translators: %d: number of log entries
+#: includes/class-oidc-log.php
+msgid "%d Einträge gesamt"
+msgstr "%d entrées au total"
+
+#: includes/class-oidc-log.php
+msgid "Noch keine Einträge vorhanden."
+msgstr "Aucune entrée pour le moment."
+
+#: includes/class-oidc-log.php
+msgid "Zeitstempel"
+msgstr "Horodatage"
+
+#: includes/class-oidc-log.php
+msgid "Benutzer"
+msgstr "Utilisateur"
+
+#: includes/class-oidc-log.php
+msgid "IP-Adresse"
+msgstr "Adresse IP"
+
+#: includes/class-oidc-log.php
+msgid "Status"
+msgstr "Statut"
+
+#: includes/class-oidc-log.php
+msgid "Meldung"
+msgstr "Message"
+
+#: includes/class-oidc-log.php
+msgid "unbekannt"
+msgstr "inconnu"
+
+#: includes/class-oidc-log.php
+msgid "Erfolg"
+msgstr "Succès"
+
+#: includes/class-oidc-log.php
+msgid "Fehler"
+msgstr "Erreur"
+
+#: includes/class-oidc-admin.php
+msgid "OIDC Client"
+msgstr "Client OIDC"
+
+#: includes/class-oidc-admin.php
+msgid "OIDC Client Einstellungen"
+msgstr "Paramètres du client OIDC"
+
+#: includes/class-oidc-admin.php
+msgid "Provider"
+msgstr "Fournisseur"
+
+#: includes/class-oidc-admin.php
+msgid "Gib die Discovery-URL deines OIDC-Providers ein und klicke auf „Abrufen\", um die Endpunkte automatisch zu befüllen."
+msgstr "Saisissez l'URL de découverte de votre fournisseur OIDC et cliquez sur « Récupérer » pour remplir automatiquement les points de terminaison."
+
+#: includes/class-oidc-admin.php
+msgid "Discovery URL"
+msgstr "URL de découverte"
+
+#: includes/class-oidc-admin.php
+msgid "Abrufen"
+msgstr "Récupérer"
+
+#: includes/class-oidc-admin.php
+msgid "Provider-Name"
+msgstr "Nom du fournisseur"
+
+#: includes/class-oidc-admin.php
+msgid "Wird im Login-Button angezeigt: „Login mit …\""
+msgstr "Affiché dans le bouton de connexion : « Se connecter avec … »"
+
+#: includes/class-oidc-admin.php
+msgid "Issuer"
+msgstr "Émetteur"
+
+#: includes/class-oidc-admin.php
+msgid "Wird automatisch aus der Discovery-URL befüllt."
+msgstr "Rempli automatiquement à partir de l'URL de découverte."
+
+#: includes/class-oidc-admin.php
+msgid "Authorization Endpoint"
+msgstr "Point de terminaison d'autorisation"
+
+#: includes/class-oidc-admin.php
+msgid "Token Endpoint"
+msgstr "Point de terminaison de jeton"
+
+#: includes/class-oidc-admin.php
+msgid "Userinfo Endpoint"
+msgstr "Point de terminaison Userinfo"
+
+#: includes/class-oidc-admin.php
+msgid "JWKS URI"
+msgstr "URI JWKS"
+
+#: includes/class-oidc-admin.php
+msgid "PKCE (S256)"
+msgstr "PKCE (S256)"
+
+#: includes/class-oidc-admin.php
+msgid "PKCE verwenden (empfohlen). Deaktivieren wenn der Provider kein PKCE unterstützt und „invalid_client\"-Fehler auftreten."
+msgstr "Utiliser PKCE (recommandé). Désactivez si le fournisseur ne prend pas en charge PKCE et que des erreurs « invalid_client » apparaissent."
+
+#: includes/class-oidc-admin.php
+msgid "Client"
+msgstr "Client"
+
+#: includes/class-oidc-admin.php
+msgid "Client ID"
+msgstr "Identifiant client"
+
+#: includes/class-oidc-admin.php
+msgid "Client Secret"
+msgstr "Secret client"
+
+#: includes/class-oidc-admin.php
+msgid "Scopes"
+msgstr "Portées"
+
+#: includes/class-oidc-admin.php
+msgid "Leerzeichen-getrennte Liste, z. B. „openid email profile\""
+msgstr "Liste séparée par des espaces, p. ex. « openid email profile »"
+
+#: includes/class-oidc-admin.php
+msgid "Redirect URI"
+msgstr "URI de redirection"
+
+#: includes/class-oidc-admin.php
+msgid "Diese URI muss beim OIDC-Provider als erlaubte Redirect URI eingetragen werden."
+msgstr "Cette URI doit être enregistrée comme URI de redirection autorisée auprès du fournisseur OIDC."
+
+#: includes/class-oidc-admin.php
+msgid "Token-Endpoint Authentifizierung"
+msgstr "Authentification au point de terminaison de jeton"
+
+#: includes/class-oidc-admin.php
+msgid "client_secret_post – Credentials im POST-Body (Standard, z. B. easyVerein, Keycloak)"
+msgstr "client_secret_post – Identifiants dans le corps POST (par défaut, p. ex. easyVerein, Keycloak)"
+
+#: includes/class-oidc-admin.php
+msgid "client_secret_basic – HTTP Basic Auth (z. B. Azure AD, Okta)"
+msgstr "client_secret_basic – Authentification HTTP Basic (p. ex. Azure AD, Okta)"
+
+#: includes/class-oidc-admin.php
+msgid "Wie sich dieses Plugin beim Token-Endpoint authentifiziert. Bei „invalid_client\"-Fehlern die andere Methode probieren."
+msgstr "Méthode d'authentification de cette extension auprès du point de terminaison de jeton. En cas d'erreurs « invalid_client », essayez l'autre méthode."
+
+#: includes/class-oidc-admin.php
+msgid "Benutzerverwaltung"
+msgstr "Gestion des utilisateurs"
+
+#: includes/class-oidc-admin.php
+msgid "Benutzer automatisch anlegen"
+msgstr "Créer les utilisateurs automatiquement"
+
+#: includes/class-oidc-admin.php
+msgid "Falls kein lokales Konto existiert, wird automatisch eines erstellt."
+msgstr "Si aucun compte local n'existe, un compte sera créé automatiquement."
+
+#: includes/class-oidc-admin.php
+msgid "Standard-Rolle für neue Benutzer"
+msgstr "Rôle par défaut pour les nouveaux utilisateurs"
+
+#: includes/class-oidc-admin.php
+msgid "Debug-Modus"
+msgstr "Mode débogage"
+
+#: includes/class-oidc-admin.php
+msgid "Zeigt bei Fehlern die vollständige Provider-Antwort und gesendete Parameter an. Nur zur Fehlersuche aktivieren, danach wieder deaktivieren."
+msgstr "Affiche la réponse complète du fournisseur et les paramètres envoyés en cas d'erreur. À activer uniquement pour le débogage, puis désactiver à nouveau."
+
+#: includes/class-oidc-admin.php
+msgid "Erweiterte Optionen"
+msgstr "Options avancées"
+
+#: includes/class-oidc-admin.php
+msgid "End-Session Endpoint"
+msgstr "Point de terminaison de fin de session"
+
+#: includes/class-oidc-admin.php
+msgid "Token-Refresh"
+msgstr "Renouvellement du jeton"
+
+#: includes/class-oidc-admin.php
+msgid "Refresh-Token und Access-Token nach Login speichern und automatisch erneuern."
+msgstr "Enregistrer le jeton d'actualisation et le jeton d'accès après la connexion et les renouveler automatiquement."
+
+#: includes/class-oidc-admin.php
+msgid "Active-Claim"
+msgstr "Claim d'activation"
+
+#: includes/class-oidc-admin.php
+msgid "Claim-Name der Aktivierung (z. B. „active\" oder „email_verified\"). Login wird verweigert wenn false/0."
+msgstr "Nom du claim d'activation (p. ex. « active » ou « email_verified »). La connexion est refusée si la valeur est false/0."
+
+#: includes/class-oidc-admin.php
+msgid "Profilbild synchronisieren"
+msgstr "Synchroniser la photo de profil"
+
+#: includes/class-oidc-admin.php
+msgid "Profilbild (picture-Claim) vom Provider übernehmen und als WordPress-Avatar anzeigen."
+msgstr "Utiliser le claim « picture » du fournisseur comme avatar WordPress."
+
+#: includes/class-oidc-admin.php
+msgid "WP-Login-Formular ausblenden"
+msgstr "Masquer le formulaire de connexion WordPress"
+
+#: includes/class-oidc-admin.php
+msgid "Standard-WordPress-Loginformular ausblenden. Mit ?showlogin=1 weiterhin erreichbar."
+msgstr "Masquer le formulaire de connexion WordPress par défaut. Toujours accessible via ?showlogin=1."
+
+#: includes/class-oidc-admin.php
+msgid "Auto-Login"
+msgstr "Connexion automatique"
+
+#: includes/class-oidc-admin.php
+msgid "Automatisch zum OIDC-Provider weiterleiten wenn die Login-Seite aufgerufen wird."
+msgstr "Rediriger automatiquement vers le fournisseur OIDC lorsque la page de connexion est chargée."
+
+#: includes/class-oidc-admin.php
+msgid "Button-Icon URL"
+msgstr "URL de l'icône du bouton"
+
+#: includes/class-oidc-admin.php
+msgid "Token-Verschlüsselung"
+msgstr "Chiffrement des jetons"
+
+#: includes/class-oidc-admin.php
+msgid "Access-, Refresh- und ID-Token verschlüsselt in der Datenbank speichern (AES-256-CBC). Erfordert PHP OpenSSL."
+msgstr "Stocker les jetons d'accès, d'actualisation et d'identité de façon chiffrée dans la base de données (AES-256-CBC). Nécessite PHP OpenSSL."
+
+#: includes/class-oidc-admin.php
+msgid "E-Mail sperren"
+msgstr "Verrouiller l'adresse e-mail"
+
+#: includes/class-oidc-admin.php
+msgid "OIDC-Nutzer können ihre E-Mail-Adresse nicht selbst ändern."
+msgstr "Les utilisateurs OIDC ne peuvent pas modifier leur adresse e-mail."
+
+#: includes/class-oidc-admin.php
+msgid "Passwort sperren"
+msgstr "Verrouiller le mot de passe"
+
+#: includes/class-oidc-admin.php
+msgid "OIDC-Nutzer können ihr Passwort nicht selbst ändern."
+msgstr "Les utilisateurs OIDC ne peuvent pas modifier leur mot de passe."
+
+#: includes/class-oidc-admin.php
+msgid "Session-Management"
+msgstr "Gestion des sessions"
+
+#: includes/class-oidc-admin.php
+msgid "Session an Token-Ablauf binden: Bei jedem Request Token prüfen, Refresh versuchen, sonst ausloggen. Erfordert Token-Refresh."
+msgstr "Lier la session à l'expiration du jeton : vérifier le jeton à chaque requête, tenter un renouvellement, sinon déconnecter. Nécessite le renouvellement des jetons."
+
+#: includes/class-oidc-admin.php
+msgid "Angemeldet bleiben"
+msgstr "Rester connecté"
+
+#: includes/class-oidc-admin.php
+msgid "Nie – Sitzung endet beim Schließen des Browsers"
+msgstr "Jamais – La session se termine à la fermeture du navigateur"
+
+#: includes/class-oidc-admin.php
+msgid "Immer – Dauerhaftes Auth-Cookie (14 Tage)"
+msgstr "Toujours – Cookie d'authentification persistant (14 jours)"
+
+#: includes/class-oidc-admin.php
+msgid "Rollen-Mapping"
+msgstr "Correspondance des rôles"
+
+#: includes/class-oidc-admin.php
+msgid "Ordne Werte aus dem Rollen-Claim WordPress-Rollen zu. Wird kein Mapping gefunden, bleibt die bestehende Rolle erhalten."
+msgstr "Associer les valeurs du claim de rôle aux rôles WordPress. Si aucune correspondance n'est trouvée, le rôle existant est conservé."
+
+#: includes/class-oidc-admin.php
+msgid "Rollen-Claim"
+msgstr "Claim de rôle"
+
+#: includes/class-oidc-admin.php
+msgid "Name des Claims der Rollen enthält, z. B. „roles\" oder „groups\"."
+msgstr "Nom du claim contenant les rôles, p. ex. « roles » ou « groups »."
+
+#: includes/class-oidc-admin.php
+msgid "Claim-Wert"
+msgstr "Valeur du claim"
+
+#: includes/class-oidc-admin.php
+msgid "WordPress-Rolle"
+msgstr "Rôle WordPress"
+
+#: includes/class-oidc-admin.php
+msgid "Entfernen"
+msgstr "Supprimer"
+
+#: includes/class-oidc-admin.php
+msgid "Einem Claim-Wert können mehrere Zeilen zugewiesen werden. Es wird die erste passende Zeile verwendet."
+msgstr "Plusieurs lignes peuvent être attribuées à une valeur de claim. La première ligne correspondante est utilisée."
+
+#: includes/class-oidc-admin.php
+msgid "+ Zeile hinzufügen"
+msgstr "+ Ajouter une ligne"
+
+#: includes/class-oidc-admin.php
+msgid "Konfiguration auf OIDC-Provider-Seite"
+msgstr "Configuration côté fournisseur OIDC"
+
+#: includes/class-oidc-admin.php
+msgid "Diese Werte musst du in der Client-Konfiguration deines OIDC-Providers (z. B. Keycloak, Entra ID, Google, easyVerein) hinterlegen."
+msgstr "Saisissez ces valeurs dans la configuration client de votre fournisseur OIDC (p. ex. Keycloak, Entra ID, Google, easyVerein)."
+
+#: includes/class-oidc-admin.php
+msgid "Parameter"
+msgstr "Paramètre"
+
+#: includes/class-oidc-admin.php
+msgid "Wert"
+msgstr "Valeur"
+
+#: includes/class-oidc-admin.php
+msgid "Redirect URI (Callback URL)"
+msgstr "URI de redirection (URL de rappel)"
+
+#: includes/class-oidc-admin.php
+msgid "Post-logout Redirect URI"
+msgstr "URI de redirection après déconnexion"
+
+#: includes/class-oidc-admin.php
+msgid "Backchannel Logout URI"
+msgstr "URI de déconnexion backchannel"
+
+#: includes/class-oidc-admin.php
+msgid "Allowed Origin / CORS Origin"
+msgstr "Origine autorisée / Origine CORS"
+
+#: includes/class-oidc-admin.php
+msgid "Allowed Web Origin"
+msgstr "Origine web autorisée"
+
+#: includes/class-oidc-admin.php
+msgid "Initiate Login URI"
+msgstr "URI d'initiation de connexion"
+
+#: includes/class-oidc-admin.php
+msgid "Kopieren"
+msgstr "Copier"
+
+#: includes/class-oidc-admin.php
+msgid "JWKS-Cache leeren"
+msgstr "Vider le cache JWKS"
+
+#. translators: %d: HTTP status code
+#: includes/class-oidc-admin.php
+msgid "HTTP-Fehler %d"
+msgstr "Erreur HTTP %d"
+
+#: includes/class-oidc-admin.php
+msgid "Ungültige JSON-Antwort."
+msgstr "Réponse JSON invalide."
+
+#: includes/class-oidc-admin.php
+msgid "Wird abgerufen…"
+msgstr "Récupération en cours…"
+
+#: includes/class-oidc-admin.php
+msgid "Fehler beim Abrufen."
+msgstr "Erreur lors de la récupération."
+
+#: includes/class-oidc-admin.php
+msgid "Erfolgreich abgerufen."
+msgstr "Récupération réussie."
+
+#: includes/class-oidc-admin.php
+msgid "Cache geleert."
+msgstr "Cache vidé."
+
+#: includes/class-oidc-admin.php
+msgid "Fehler beim Leeren."
+msgstr "Erreur lors du vidage du cache."
+
+#: includes/class-oidc-login.php
+msgid "oder"
+msgstr "ou"
+
+#. translators: %s: name of the OIDC provider
+#: includes/class-oidc-login.php
+msgid "Login mit %s"
+msgstr "Se connecter avec %s"
+
+#: includes/class-oidc-login.php
+msgid "Sicherheitscheck fehlgeschlagen."
+msgstr "Échec de la vérification de sécurité."
+
+#: includes/class-oidc-auth.php
+msgid "OIDC ist nicht vollständig konfiguriert. Bitte prüfe die Einstellungen."
+msgstr "OIDC n'est pas entièrement configuré. Veuillez vérifier les paramètres."
+
+#. translators: 1: error code, 2: description or empty
+#: includes/class-oidc-auth.php
+msgid "Fehler vom Provider (Authorization): %1$s%2$s"
+msgstr "Erreur du fournisseur (autorisation) : %1$s%2$s"
+
+#: includes/class-oidc-auth.php
+msgid "Fehlende Parameter im Callback."
+msgstr "Paramètres manquants dans le callback."
+
+#: includes/class-oidc-auth.php
+msgid "Ungültiger oder abgelaufener State-Parameter."
+msgstr "Paramètre state invalide ou expiré."
+
+#: includes/class-oidc-auth.php
+msgid "Kein ID-Token empfangen."
+msgstr "Aucun jeton d'identité reçu."
+
+#: includes/class-oidc-auth.php
+msgid "Ungültige oder fehlende Nonce im ID-Token."
+msgstr "Nonce invalide ou absent dans le jeton d'identité."
+
+#: includes/class-oidc-auth.php
+msgid "Userinfo-Endpoint nicht konfiguriert."
+msgstr "Point de terminaison Userinfo non configuré."
+
+#: includes/class-oidc-auth.php
+msgid "Der Provider hat keine E-Mail-Adresse zurückgegeben. Bitte prüfe die konfigurierten Scopes."
+msgstr "Le fournisseur n'a pas retourné d'adresse e-mail. Veuillez vérifier les portées configurées."
+
+#. translators: 1: error code, 2: description or empty
+#: includes/class-oidc-auth.php
+msgid "Fehler vom Provider (Token-Endpoint): %1$s%2$s"
+msgstr "Erreur du fournisseur (point de terminaison de jeton) : %1$s%2$s"
+
+#: includes/class-oidc-auth.php
+msgid "Token-Endpoint nicht konfiguriert."
+msgstr "Point de terminaison de jeton non configuré."
+
+#. translators: %d: HTTP status code
+#: includes/class-oidc-auth.php
+msgid "Token-Request fehlgeschlagen (HTTP %d)."
+msgstr "Échec de la requête de jeton (HTTP %d)."
+
+#: includes/class-oidc-auth.php
+msgid "ID-Token ist abgelaufen."
+msgstr "Le jeton d'identité a expiré."
+
+#: includes/class-oidc-auth.php
+msgid "ID-Token iat ist ungültig."
+msgstr "Le champ iat du jeton d'identité est invalide."
+
+#: includes/class-oidc-auth.php
+msgid "ID-Token Issuer stimmt nicht überein."
+msgstr "L'émetteur du jeton d'identité ne correspond pas."
+
+#: includes/class-oidc-auth.php
+msgid "ID-Token Audience stimmt nicht überein."
+msgstr "L'audience du jeton d'identité ne correspond pas."
+
+#: includes/class-oidc-auth.php
+msgid "Kein lokales Konto für diese E-Mail-Adresse vorhanden. Bitte wende dich an den Administrator."
+msgstr "Aucun compte local trouvé pour cette adresse e-mail. Veuillez contacter l'administrateur."
+
+#: includes/class-oidc-auth.php
+msgid "Ungültige E-Mail-Adresse vom Provider."
+msgstr "Adresse e-mail invalide fournie par le fournisseur."
+
+#: includes/class-oidc-auth.php
+msgid "Konto deaktiviert (Active-Claim)."
+msgstr "Compte désactivé (claim d'activation)."
+
+#: includes/class-oidc-auth.php
+msgid "Dein Konto ist deaktiviert. Bitte wende dich an den Administrator."
+msgstr "Votre compte est désactivé. Veuillez contacter l'administrateur."
+
+#: includes/class-oidc-auth.php
+msgid "Sitzung abgelaufen. Bitte erneut anmelden."
+msgstr "Session expirée. Veuillez vous reconnecter."
+
+#: includes/class-oidc-auth.php
+msgid "OIDC Login erfolgreich."
+msgstr "Connexion OIDC réussie."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "Ungültiges JWT-Format."
+msgstr "Format JWT invalide."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "JWT konnte nicht dekodiert werden."
+msgstr "Impossible de décoder le JWT."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "JWT enthält kein gültiges JSON."
+msgstr "Le JWT ne contient pas de JSON valide."
+
+#. translators: %d: HTTP status code
+#: includes/class-oidc-jwt-helper.php
+msgid "JWKS-Abruf fehlgeschlagen (HTTP %d)."
+msgstr "Échec de la récupération JWKS (HTTP %d)."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "Ungültige JWKS-Antwort."
+msgstr "Réponse JWKS invalide."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "PHP OpenSSL-Extension ist nicht verfügbar."
+msgstr "L'extension PHP OpenSSL n'est pas disponible."
+
+#. translators: %s: algorithm name
+#: includes/class-oidc-jwt-helper.php
+msgid "Nicht unterstützter Signaturalgorithmus: %s"
+msgstr "Algorithme de signature non pris en charge : %s"
+
+#: includes/class-oidc-jwt-helper.php
+msgid "Passender Public Key im JWKS nicht gefunden."
+msgstr "Clé publique correspondante introuvable dans le JWKS."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "JWT-Signatur konnte nicht dekodiert werden."
+msgstr "Impossible de décoder la signature JWT."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "Public Key konnte nicht geladen werden."
+msgstr "Impossible de charger la clé publique."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "JWT-Signatur ist ungültig."
+msgstr "La signature JWT est invalide."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "JWK fehlen n oder e Parameter."
+msgstr "Les paramètres n ou e sont absents du JWK."
+
+#: includes/class-oidc-jwt-helper.php
+msgid "JWK-Parameter konnten nicht dekodiert werden."
+msgstr "Impossible de décoder les paramètres JWK."
+
+#: includes/class-oidc-tokens.php
+msgid "Kein Refresh-Token vorhanden."
+msgstr "Aucun jeton d'actualisation disponible."
+
+#: includes/class-oidc-tokens.php
+msgid "Token-Refresh fehlgeschlagen."
+msgstr "Échec du renouvellement du jeton."
+
+#: includes/class-oidc-logout.php
+msgid "Sicherheitstoken ungültig."
+msgstr "Jeton de sécurité invalide."
+
+#: includes/class-oidc-profile.php
+msgid "OpenID Connect"
+msgstr "OpenID Connect"
+
+#: includes/class-oidc-profile.php
+msgid "OIDC-Verknüpfung"
+msgstr "Liaison OIDC"
+
+#: includes/class-oidc-profile.php
+msgid "Dieses Konto ist mit einem OIDC-Anbieter verknüpft."
+msgstr "Ce compte est lié à un fournisseur OIDC."
+
+#: includes/class-oidc-profile.php
+msgid "OIDC-Verknüpfung wirklich aufheben?"
+msgstr "Voulez-vous vraiment dissocier le fournisseur OIDC ?"
+
+#: includes/class-oidc-profile.php
+msgid "Verknüpfung aufheben"
+msgstr "Dissocier"
+
+#: includes/class-oidc-profile.php
+msgid "Dieses Konto ist nicht mit einem OIDC-Anbieter verknüpft."
+msgstr "Ce compte n'est pas lié à un fournisseur OIDC."
+
+#: includes/class-oidc-profile.php
+msgid "Mit OIDC-Anbieter verknüpfen"
+msgstr "Lier un fournisseur OIDC"
+
+#: includes/class-oidc-profile.php
+msgid "Die E-Mail-Adresse kann nicht geändert werden, da dieses Konto mit einem OIDC-Anbieter verknüpft ist."
+msgstr "L'adresse e-mail ne peut pas être modifiée car ce compte est lié à un fournisseur OIDC."
+
+#: includes/class-oidc-profile.php
+msgid "Das Passwort kann nicht geändert werden, da dieses Konto mit einem OIDC-Anbieter verknüpft ist."
+msgstr "Le mot de passe ne peut pas être modifié car ce compte est lié à un fournisseur OIDC."
+
+#: includes/class-oidc-profile.php
+msgid "E-Mail-Adresse wird vom OIDC-Anbieter verwaltet und kann hier nicht geändert werden."
+msgstr "L'adresse e-mail est gérée par le fournisseur OIDC et ne peut pas être modifiée ici."
+
+#: includes/class-oidc-profile.php
+msgid "Passwort wird vom OIDC-Anbieter verwaltet und kann hier nicht geändert werden."
+msgstr "Le mot de passe est géré par le fournisseur OIDC et ne peut pas être modifié ici."

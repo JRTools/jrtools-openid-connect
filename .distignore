@@ -1,0 +1,14 @@
+.git
+.github
+.phpcs.xml
+.distignore
+bin
+composer.json
+composer.lock
+phpunit.xml.dist
+tests
+vendor
+wordpress
+node_modules
+dist
+*.zip

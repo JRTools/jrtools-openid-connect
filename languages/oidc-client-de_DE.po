@@ -1,0 +1,462 @@
+# German translation for OIDC Client
+# Copyright (C) 2024 OIDC Client
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: OIDC Client 1.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/example/oidc-client/issues\n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: German <de@li.org>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit\n"
+"X-Domain: oidc-client\n"
+
+msgid "OIDC Login-Log"
+msgstr "OIDC Anmelde-Protokoll"
+
+msgid "Keine Berechtigung."
+msgstr "Keine Berechtigung."
+
+msgid "%d Einträge gesamt"
+msgstr "%d Einträge gesamt"
+
+msgid "Noch keine Einträge vorhanden."
+msgstr "Noch keine Einträge vorhanden."
+
+msgid "Zeitstempel"
+msgstr "Zeitstempel"
+
+msgid "Benutzer"
+msgstr "Benutzer"
+
+msgid "IP-Adresse"
+msgstr "IP-Adresse"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Meldung"
+msgstr "Meldung"
+
+msgid "unbekannt"
+msgstr "unbekannt"
+
+msgid "Erfolg"
+msgstr "Erfolg"
+
+msgid "Fehler"
+msgstr "Fehler"
+
+msgid "OIDC Client"
+msgstr "OIDC Client"
+
+msgid "OIDC Client Einstellungen"
+msgstr "OIDC Client Einstellungen"
+
+msgid "Provider"
+msgstr "Provider"
+
+msgid "Gib die Discovery-URL deines OIDC-Providers ein und klicke auf „Abrufen\", um die Endpunkte automatisch zu befüllen."
+msgstr "Gib die Discovery-URL deines OIDC-Providers ein und klicke auf „Abrufen\", um die Endpunkte automatisch zu befüllen."
+
+msgid "Discovery URL"
+msgstr "Discovery URL"
+
+msgid "Abrufen"
+msgstr "Abrufen"
+
+msgid "Provider-Name"
+msgstr "Provider-Name"
+
+msgid "Wird im Login-Button angezeigt: „Login mit …\""
+msgstr "Wird im Login-Button angezeigt: „Login mit …\""
+
+msgid "Issuer"
+msgstr "Issuer"
+
+msgid "Wird automatisch aus der Discovery-URL befüllt."
+msgstr "Wird automatisch aus der Discovery-URL befüllt."
+
+msgid "Authorization Endpoint"
+msgstr "Authorization Endpoint"
+
+msgid "Token Endpoint"
+msgstr "Token Endpoint"
+
+msgid "Userinfo Endpoint"
+msgstr "Userinfo Endpoint"
+
+msgid "JWKS URI"
+msgstr "JWKS URI"
+
+msgid "PKCE (S256)"
+msgstr "PKCE (S256)"
+
+msgid "PKCE verwenden (empfohlen). Deaktivieren wenn der Provider kein PKCE unterstützt und „invalid_client\"-Fehler auftreten."
+msgstr "PKCE verwenden (empfohlen). Deaktivieren wenn der Provider kein PKCE unterstützt und „invalid_client\"-Fehler auftreten."
+
+msgid "Client"
+msgstr "Client"
+
+msgid "Client ID"
+msgstr "Client-ID"
+
+msgid "Client Secret"
+msgstr "Client-Secret"
+
+msgid "Scopes"
+msgstr "Scopes"
+
+msgid "Leerzeichen-getrennte Liste, z. B. „openid email profile\""
+msgstr "Leerzeichen-getrennte Liste, z. B. „openid email profile\""
+
+msgid "Redirect URI"
+msgstr "Redirect URI"
+
+msgid "Diese URI muss beim OIDC-Provider als erlaubte Redirect URI eingetragen werden."
+msgstr "Diese URI muss beim OIDC-Provider als erlaubte Redirect URI eingetragen werden."
+
+msgid "Token-Endpoint Authentifizierung"
+msgstr "Token-Endpoint Authentifizierung"
+
+msgid "client_secret_post – Credentials im POST-Body (Standard, z. B. easyVerein, Keycloak)"
+msgstr "client_secret_post – Credentials im POST-Body (Standard, z. B. easyVerein, Keycloak)"
+
+msgid "client_secret_basic – HTTP Basic Auth (z. B. Azure AD, Okta)"
+msgstr "client_secret_basic – HTTP Basic Auth (z. B. Azure AD, Okta)"
+
+msgid "Wie sich dieses Plugin beim Token-Endpoint authentifiziert. Bei „invalid_client\"-Fehlern die andere Methode probieren."
+msgstr "Wie sich dieses Plugin beim Token-Endpoint authentifiziert. Bei „invalid_client\"-Fehlern die andere Methode probieren."
+
+msgid "Benutzerverwaltung"
+msgstr "Benutzerverwaltung"
+
+msgid "Benutzer automatisch anlegen"
+msgstr "Benutzer automatisch anlegen"
+
+msgid "Falls kein lokales Konto existiert, wird automatisch eines erstellt."
+msgstr "Falls kein lokales Konto existiert, wird automatisch eines erstellt."
+
+msgid "Standard-Rolle für neue Benutzer"
+msgstr "Standard-Rolle für neue Benutzer"
+
+msgid "Debug-Modus"
+msgstr "Debug-Modus"
+
+msgid "Zeigt bei Fehlern die vollständige Provider-Antwort und gesendete Parameter an. Nur zur Fehlersuche aktivieren, danach wieder deaktivieren."
+msgstr "Zeigt bei Fehlern die vollständige Provider-Antwort und gesendete Parameter an. Nur zur Fehlersuche aktivieren, danach wieder deaktivieren."
+
+msgid "Erweiterte Optionen"
+msgstr "Erweiterte Optionen"
+
+msgid "End-Session Endpoint"
+msgstr "End-Session Endpoint"
+
+msgid "Token-Refresh"
+msgstr "Token-Refresh"
+
+msgid "Refresh-Token und Access-Token nach Login speichern und automatisch erneuern."
+msgstr "Refresh-Token und Access-Token nach Login speichern und automatisch erneuern."
+
+msgid "Active-Claim"
+msgstr "Active-Claim"
+
+msgid "Claim-Name der Aktivierung (z. B. „active\" oder „email_verified\"). Login wird verweigert wenn false/0."
+msgstr "Claim-Name der Aktivierung (z. B. „active\" oder „email_verified\"). Login wird verweigert wenn false/0."
+
+msgid "Profilbild synchronisieren"
+msgstr "Profilbild synchronisieren"
+
+msgid "Profilbild (picture-Claim) vom Provider übernehmen und als WordPress-Avatar anzeigen."
+msgstr "Profilbild (picture-Claim) vom Provider übernehmen und als WordPress-Avatar anzeigen."
+
+msgid "WP-Login-Formular ausblenden"
+msgstr "WP-Login-Formular ausblenden"
+
+msgid "Standard-WordPress-Loginformular ausblenden. Mit ?showlogin=1 weiterhin erreichbar."
+msgstr "Standard-WordPress-Loginformular ausblenden. Mit ?showlogin=1 weiterhin erreichbar."
+
+msgid "Auto-Login"
+msgstr "Auto-Login"
+
+msgid "Automatisch zum OIDC-Provider weiterleiten wenn die Login-Seite aufgerufen wird."
+msgstr "Automatisch zum OIDC-Provider weiterleiten wenn die Login-Seite aufgerufen wird."
+
+msgid "Button-Icon URL"
+msgstr "Button-Icon URL"
+
+msgid "Token-Verschlüsselung"
+msgstr "Token-Verschlüsselung"
+
+msgid "Access-, Refresh- und ID-Token verschlüsselt in der Datenbank speichern (AES-256-CBC). Erfordert PHP OpenSSL."
+msgstr "Access-, Refresh- und ID-Token verschlüsselt in der Datenbank speichern (AES-256-CBC). Erfordert PHP OpenSSL."
+
+msgid "E-Mail sperren"
+msgstr "E-Mail sperren"
+
+msgid "OIDC-Nutzer können ihre E-Mail-Adresse nicht selbst ändern."
+msgstr "OIDC-Nutzer können ihre E-Mail-Adresse nicht selbst ändern."
+
+msgid "Passwort sperren"
+msgstr "Passwort sperren"
+
+msgid "OIDC-Nutzer können ihr Passwort nicht selbst ändern."
+msgstr "OIDC-Nutzer können ihr Passwort nicht selbst ändern."
+
+msgid "Session-Management"
+msgstr "Session-Management"
+
+msgid "Session an Token-Ablauf binden: Bei jedem Request Token prüfen, Refresh versuchen, sonst ausloggen. Erfordert Token-Refresh."
+msgstr "Session an Token-Ablauf binden: Bei jedem Request Token prüfen, Refresh versuchen, sonst ausloggen. Erfordert Token-Refresh."
+
+msgid "Angemeldet bleiben"
+msgstr "Angemeldet bleiben"
+
+msgid "Nie – Sitzung endet beim Schließen des Browsers"
+msgstr "Nie – Sitzung endet beim Schließen des Browsers"
+
+msgid "Immer – Dauerhaftes Auth-Cookie (14 Tage)"
+msgstr "Immer – Dauerhaftes Auth-Cookie (14 Tage)"
+
+msgid "Rollen-Mapping"
+msgstr "Rollen-Zuordnung"
+
+msgid "Ordne Werte aus dem Rollen-Claim WordPress-Rollen zu. Wird kein Mapping gefunden, bleibt die bestehende Rolle erhalten."
+msgstr "Ordne Werte aus dem Rollen-Claim WordPress-Rollen zu. Wird kein Mapping gefunden, bleibt die bestehende Rolle erhalten."
+
+msgid "Rollen-Claim"
+msgstr "Rollen-Claim"
+
+msgid "Name des Claims der Rollen enthält, z. B. „roles\" oder „groups\"."
+msgstr "Name des Claims der Rollen enthält, z. B. „roles\" oder „groups\"."
+
+msgid "Claim-Wert"
+msgstr "Claim-Wert"
+
+msgid "WordPress-Rolle"
+msgstr "WordPress-Rolle"
+
+msgid "Entfernen"
+msgstr "Entfernen"
+
+msgid "Einem Claim-Wert können mehrere Zeilen zugewiesen werden. Es wird die erste passende Zeile verwendet."
+msgstr "Einem Claim-Wert können mehrere Zeilen zugewiesen werden. Es wird die erste passende Zeile verwendet."
+
+msgid "+ Zeile hinzufügen"
+msgstr "+ Zeile hinzufügen"
+
+msgid "Konfiguration auf OIDC-Provider-Seite"
+msgstr "Konfiguration auf OIDC-Provider-Seite"
+
+msgid "Diese Werte musst du in der Client-Konfiguration deines OIDC-Providers (z. B. Keycloak, Entra ID, Google, easyVerein) hinterlegen."
+msgstr "Diese Werte musst du in der Client-Konfiguration deines OIDC-Providers (z. B. Keycloak, Entra ID, Google, easyVerein) hinterlegen."
+
+msgid "Parameter"
+msgstr "Parameter"
+
+msgid "Wert"
+msgstr "Wert"
+
+msgid "Redirect URI (Callback URL)"
+msgstr "Redirect URI (Callback URL)"
+
+msgid "Post-logout Redirect URI"
+msgstr "Post-logout Redirect URI"
+
+msgid "Backchannel Logout URI"
+msgstr "Backchannel Logout URI"
+
+msgid "Allowed Origin / CORS Origin"
+msgstr "Allowed Origin / CORS Origin"
+
+msgid "Allowed Web Origin"
+msgstr "Allowed Web Origin"
+
+msgid "Initiate Login URI"
+msgstr "Initiate Login URI"
+
+msgid "Kopieren"
+msgstr "Kopieren"
+
+msgid "JWKS-Cache leeren"
+msgstr "JWKS-Cache leeren"
+
+msgid "HTTP-Fehler %d"
+msgstr "HTTP-Fehler %d"
+
+msgid "Ungültige JSON-Antwort."
+msgstr "Ungültige JSON-Antwort."
+
+msgid "Wird abgerufen…"
+msgstr "Wird abgerufen…"
+
+msgid "Fehler beim Abrufen."
+msgstr "Fehler beim Abrufen."
+
+msgid "Erfolgreich abgerufen."
+msgstr "Erfolgreich abgerufen."
+
+msgid "Cache geleert."
+msgstr "Cache geleert."
+
+msgid "Fehler beim Leeren."
+msgstr "Fehler beim Leeren."
+
+msgid "oder"
+msgstr "oder"
+
+msgid "Login mit %s"
+msgstr "Anmelden mit %s"
+
+msgid "Sicherheitscheck fehlgeschlagen."
+msgstr "Sicherheitsüberprüfung fehlgeschlagen."
+
+msgid "OIDC ist nicht vollständig konfiguriert. Bitte prüfe die Einstellungen."
+msgstr "OIDC ist nicht vollständig konfiguriert. Bitte prüfe die Einstellungen."
+
+msgid "Fehler vom Provider (Authorization): %1$s%2$s"
+msgstr "Fehler vom Provider (Autorisierung): %1$s%2$s"
+
+msgid "Fehlende Parameter im Callback."
+msgstr "Fehlende Parameter im Callback."
+
+msgid "Ungültiger oder abgelaufener State-Parameter."
+msgstr "Ungültiger oder abgelaufener State-Parameter."
+
+msgid "Kein ID-Token empfangen."
+msgstr "Kein ID-Token empfangen."
+
+msgid "Ungültige oder fehlende Nonce im ID-Token."
+msgstr "Ungültige oder fehlende Nonce im ID-Token."
+
+msgid "Userinfo-Endpoint nicht konfiguriert."
+msgstr "Userinfo-Endpoint nicht konfiguriert."
+
+msgid "Der Provider hat keine E-Mail-Adresse zurückgegeben. Bitte prüfe die konfigurierten Scopes."
+msgstr "Der Provider hat keine E-Mail-Adresse zurückgegeben. Bitte prüfe die konfigurierten Scopes."
+
+msgid "Fehler vom Provider (Token-Endpoint): %1$s%2$s"
+msgstr "Fehler vom Provider (Token-Endpoint): %1$s%2$s"
+
+msgid "Token-Endpoint nicht konfiguriert."
+msgstr "Token-Endpoint nicht konfiguriert."
+
+msgid "Token-Request fehlgeschlagen (HTTP %d)."
+msgstr "Token-Anfrage fehlgeschlagen (HTTP %d)."
+
+msgid "ID-Token ist abgelaufen."
+msgstr "ID-Token ist abgelaufen."
+
+msgid "ID-Token iat ist ungültig."
+msgstr "ID-Token iat ist ungültig."
+
+msgid "ID-Token Issuer stimmt nicht überein."
+msgstr "ID-Token Issuer stimmt nicht überein."
+
+msgid "ID-Token Audience stimmt nicht überein."
+msgstr "ID-Token Audience stimmt nicht überein."
+
+msgid "Kein lokales Konto für diese E-Mail-Adresse vorhanden. Bitte wende dich an den Administrator."
+msgstr "Kein lokales Konto für diese E-Mail-Adresse vorhanden. Bitte wende dich an den Administrator."
+
+msgid "Ungültige E-Mail-Adresse vom Provider."
+msgstr "Ungültige E-Mail-Adresse vom Provider."
+
+msgid "Konto deaktiviert (Active-Claim)."
+msgstr "Konto deaktiviert (Active-Claim)."
+
+msgid "Dein Konto ist deaktiviert. Bitte wende dich an den Administrator."
+msgstr "Dein Konto ist deaktiviert. Bitte wende dich an den Administrator."
+
+msgid "Sitzung abgelaufen. Bitte erneut anmelden."
+msgstr "Sitzung abgelaufen. Bitte erneut anmelden."
+
+msgid "OIDC Login erfolgreich."
+msgstr "OIDC-Anmeldung erfolgreich."
+
+msgid "Ungültiges JWT-Format."
+msgstr "Ungültiges JWT-Format."
+
+msgid "JWT konnte nicht dekodiert werden."
+msgstr "JWT konnte nicht dekodiert werden."
+
+msgid "JWT enthält kein gültiges JSON."
+msgstr "JWT enthält kein gültiges JSON."
+
+msgid "JWKS-Abruf fehlgeschlagen (HTTP %d)."
+msgstr "JWKS-Abruf fehlgeschlagen (HTTP %d)."
+
+msgid "Ungültige JWKS-Antwort."
+msgstr "Ungültige JWKS-Antwort."
+
+msgid "PHP OpenSSL-Extension ist nicht verfügbar."
+msgstr "PHP OpenSSL-Erweiterung ist nicht verfügbar."
+
+msgid "Nicht unterstützter Signaturalgorithmus: %s"
+msgstr "Nicht unterstützter Signaturalgorithmus: %s"
+
+msgid "Passender Public Key im JWKS nicht gefunden."
+msgstr "Passender Public Key im JWKS nicht gefunden."
+
+msgid "JWT-Signatur konnte nicht dekodiert werden."
+msgstr "JWT-Signatur konnte nicht dekodiert werden."
+
+msgid "Public Key konnte nicht geladen werden."
+msgstr "Public Key konnte nicht geladen werden."
+
+msgid "JWT-Signatur ist ungültig."
+msgstr "JWT-Signatur ist ungültig."
+
+msgid "JWK fehlen n oder e Parameter."
+msgstr "JWK fehlen n oder e Parameter."
+
+msgid "JWK-Parameter konnten nicht dekodiert werden."
+msgstr "JWK-Parameter konnten nicht dekodiert werden."
+
+msgid "Kein Refresh-Token vorhanden."
+msgstr "Kein Refresh-Token vorhanden."
+
+msgid "Token-Refresh fehlgeschlagen."
+msgstr "Token-Aktualisierung fehlgeschlagen."
+
+msgid "Sicherheitstoken ungültig."
+msgstr "Sicherheitstoken ungültig."
+
+msgid "OpenID Connect"
+msgstr "OpenID Connect"
+
+msgid "OIDC-Verknüpfung"
+msgstr "OIDC-Verknüpfung"
+
+msgid "Dieses Konto ist mit einem OIDC-Anbieter verknüpft."
+msgstr "Dieses Konto ist mit einem OIDC-Anbieter verknüpft."
+
+msgid "OIDC-Verknüpfung wirklich aufheben?"
+msgstr "OIDC-Verknüpfung wirklich aufheben?"
+
+msgid "Verknüpfung aufheben"
+msgstr "Verknüpfung aufheben"
+
+msgid "Dieses Konto ist nicht mit einem OIDC-Anbieter verknüpft."
+msgstr "Dieses Konto ist nicht mit einem OIDC-Anbieter verknüpft."
+
+msgid "Mit OIDC-Anbieter verknüpfen"
+msgstr "Mit OIDC-Anbieter verknüpfen"
+
+msgid "Die E-Mail-Adresse kann nicht geändert werden, da dieses Konto mit einem OIDC-Anbieter verknüpft ist."
+msgstr "Die E-Mail-Adresse kann nicht geändert werden, da dieses Konto mit einem OIDC-Anbieter verknüpft ist."
+
+msgid "Das Passwort kann nicht geändert werden, da dieses Konto mit einem OIDC-Anbieter verknüpft ist."
+msgstr "Das Passwort kann nicht geändert werden, da dieses Konto mit einem OIDC-Anbieter verknüpft ist."
+
+msgid "E-Mail-Adresse wird vom OIDC-Anbieter verwaltet und kann hier nicht geändert werden."
+msgstr "E-Mail-Adresse wird vom OIDC-Anbieter verwaltet und kann hier nicht geändert werden."
+
+msgid "Passwort wird vom OIDC-Anbieter verwaltet und kann hier nicht geändert werden."
+msgstr "Passwort wird vom OIDC-Anbieter verwaltet und kann hier nicht geändert werden."
