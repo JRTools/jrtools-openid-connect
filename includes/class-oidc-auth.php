@@ -103,7 +103,7 @@ class OIDC_Auth {
             $params['prompt'] = sanitize_text_field( $extra_params['prompt'] );
         }
 
-        wp_safe_redirect( $auth_ep . '?' . http_build_query( $params ) );
+        wp_redirect( $auth_ep . '?' . http_build_query( $params ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Externes Redirect zum OIDC Authorization Endpoint (gespeicherte Admin-Option, kein User-Input).
         exit;
     }
 

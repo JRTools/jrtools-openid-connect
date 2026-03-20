@@ -38,7 +38,7 @@ class OIDC_Logout {
             $params['id_token_hint'] = $id_token;
         }
 
-        wp_safe_redirect( $end_session_ep . '?' . http_build_query( $params ) );
+        wp_redirect( $end_session_ep . '?' . http_build_query( $params ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Externes Redirect zum OIDC End-Session-Endpoint (gespeicherte Admin-Option, kein User-Input).
         exit;
     }
 
