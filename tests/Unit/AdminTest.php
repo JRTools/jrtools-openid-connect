@@ -516,4 +516,70 @@ class AdminTest extends WpTestCase {
         $this->expectExceptionMessage( 'success' );
         $this->admin->ajax_fetch_discovery();
     }
+
+    // -------------------------------------------------------------------------
+    // ajax_clear_cache
+    // -------------------------------------------------------------------------
+
+    public function test_ajax_clear_cache_no_permission_sends_error() {
+        Functions\when( 'check_ajax_referer' )->justReturn( true );
+        Functions\when( 'current_user_can' )->justReturn( false );
+        Functions\when( 'wp_send_json_error' )->alias( function ( $data, $status ) {
+            throw new OidcTestException( 'error:' . $status );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->expectExceptionMessage( 'error:403' );
+        $this->admin->ajax_clear_cache();
+    }
+
+    public function test_ajax_clear_cache_with_permission_runs_query() {
+        $queryCalled = false;
+        $GLOBALS['wpdb'] = new class( $queryCalled ) {
+            public $prefix   = 'wp_';
+            public $options  = 'wp_options';
+            public $called   = false;
+            public function __construct( &$ref ) { $this->called = &$ref; }
+            public function query( $sql ) { $this->called = true; return 1; }
+        };
+
+        Functions\when( 'check_ajax_referer' )->justReturn( true );
+        Functions\when( 'current_user_can' )->justReturn( true );
+        Functions\when( 'wp_send_json_success' )->alias( function () {
+            throw new OidcTestException( 'success' );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->admin->ajax_clear_cache();
+    }
+
+    // -------------------------------------------------------------------------
+    // field_roles_dropdown
+    // -------------------------------------------------------------------------
+
+    public function test_field_roles_dropdown_outputs_select_with_roles() {
+        Functions\when( 'get_option' )->justReturn( 'subscriber' );
+        Functions\when( 'esc_attr' )->returnArg();
+        Functions\when( 'esc_html' )->returnArg();
+        Functions\when( 'translate_user_role' )->returnArg();
+        Functions\when( 'selected' )->alias( function ( $selected, $current, $_echo = true ) {
+            return $selected === $current ? ' selected="selected"' : '';
+        } );
+
+        $wpRoles = new stdClass();
+        $wpRoles->roles = array(
+            'administrator' => array( 'name' => 'Administrator' ),
+            'editor'        => array( 'name' => 'Editor' ),
+            'subscriber'    => array( 'name' => 'Subscriber' ),
+        );
+        Functions\when( 'wp_roles' )->justReturn( $wpRoles );
+
+        ob_start();
+        $this->admin->field_roles_dropdown();
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString( '<select', $output );
+        $this->assertStringContainsString( 'administrator', $output );
+        $this->assertStringContainsString( 'subscriber', $output );
+    }
 }

@@ -314,4 +314,167 @@ class ProfileTest extends WpTestCase {
         $profile = new OIDC_Profile();
         $profile->handle_unlink();
     }
+
+    // -------------------------------------------------------------------------
+    // lock_profile_fields_ui
+    // -------------------------------------------------------------------------
+
+    public function test_lock_profile_fields_ui_no_subject_outputs_nothing() {
+        Functions\when( 'get_user_meta' )->justReturn( '' );
+
+        $user     = new WP_User();
+        $user->ID = 1;
+
+        $profile = new OIDC_Profile();
+        ob_start();
+        $profile->lock_profile_fields_ui( $user );
+        $output = ob_get_clean();
+
+        $this->assertSame( '', $output );
+    }
+
+    public function test_lock_profile_fields_ui_no_locks_outputs_nothing() {
+        Functions\when( 'get_user_meta' )->justReturn( 'some-subject' );
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_lock_email' )    { return ''; }
+            if ( $key === 'oidc_lock_password' ) { return ''; }
+            return $default;
+        } );
+
+        $user     = new WP_User();
+        $user->ID = 1;
+
+        $profile = new OIDC_Profile();
+        ob_start();
+        $profile->lock_profile_fields_ui( $user );
+        $output = ob_get_clean();
+
+        $this->assertSame( '', $output );
+    }
+
+    public function test_lock_profile_fields_ui_email_lock_outputs_style() {
+        Functions\when( 'get_user_meta' )->justReturn( 'some-subject' );
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_lock_email' )    { return '1'; }
+            if ( $key === 'oidc_lock_password' ) { return ''; }
+            return $default;
+        } );
+        Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
+        Functions\when( '__' )->returnArg();
+
+        $user     = new WP_User();
+        $user->ID = 1;
+
+        $profile = new OIDC_Profile();
+        ob_start();
+        $profile->lock_profile_fields_ui( $user );
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString( '#email', $output );
+        $this->assertStringContainsString( 'pointer-events: none', $output );
+    }
+
+    public function test_lock_profile_fields_ui_password_lock_outputs_style() {
+        Functions\when( 'get_user_meta' )->justReturn( 'some-subject' );
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_lock_email' )    { return ''; }
+            if ( $key === 'oidc_lock_password' ) { return '1'; }
+            return $default;
+        } );
+        Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
+        Functions\when( '__' )->returnArg();
+
+        $user     = new WP_User();
+        $user->ID = 1;
+
+        $profile = new OIDC_Profile();
+        ob_start();
+        $profile->lock_profile_fields_ui( $user );
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString( 'display: none', $output );
+        $this->assertStringContainsString( 'user-pass1-wrap', $output );
+    }
+
+    // -------------------------------------------------------------------------
+    // render_profile_section
+    // -------------------------------------------------------------------------
+
+    public function test_render_profile_section_linked_outputs_heading() {
+        Functions\when( 'get_user_meta' )->justReturn( 'some-subject' );
+        Functions\when( 'get_current_user_id' )->justReturn( 99 ); // anderer User
+        Functions\when( 'esc_html_e' )->justReturn( null );
+
+        $user     = new WP_User();
+        $user->ID = 1;
+
+        $profile = new OIDC_Profile();
+        ob_start();
+        $profile->render_profile_section( $user );
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString( '<h2>', $output );
+        $this->assertStringContainsString( 'dashicons-yes-alt', $output );
+    }
+
+    public function test_render_profile_section_linked_same_user_shows_unlink_button() {
+        Functions\when( 'get_user_meta' )->justReturn( 'some-subject' );
+        Functions\when( 'get_current_user_id' )->justReturn( 1 ); // gleicher User
+        Functions\when( 'esc_html_e' )->justReturn( null );
+        Functions\when( 'esc_url' )->returnArg();
+        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/admin-post.php' );
+        Functions\when( 'wp_nonce_field' )->alias( function () {
+            echo '<input type="hidden" name="oidc_unlink_nonce" value="nonce123">';
+        } );
+        Functions\when( 'esc_attr_e' )->justReturn( null );
+
+        $user     = new WP_User();
+        $user->ID = 1;
+
+        $profile = new OIDC_Profile();
+        ob_start();
+        $profile->render_profile_section( $user );
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString( 'oidc_unlink', $output );
+        $this->assertStringContainsString( 'button', $output );
+    }
+
+    public function test_render_profile_section_not_linked_outputs_link_button() {
+        Functions\when( 'get_user_meta' )->justReturn( '' );
+        Functions\when( 'get_current_user_id' )->justReturn( 1 );
+        Functions\when( 'esc_html_e' )->justReturn( null );
+        Functions\when( 'esc_url' )->returnArg();
+        Functions\when( 'add_query_arg' )->justReturn( 'https://example.com/wp-login.php?oidc_link=1' );
+        Functions\when( 'wp_login_url' )->justReturn( 'https://example.com/wp-login.php' );
+        Functions\when( 'wp_create_nonce' )->justReturn( 'nonce123' );
+
+        $user     = new WP_User();
+        $user->ID = 1;
+
+        $profile = new OIDC_Profile();
+        ob_start();
+        $profile->render_profile_section( $user );
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString( 'dashicons-no-alt', $output );
+        $this->assertStringContainsString( 'button-primary', $output );
+    }
+
+    public function test_render_profile_section_not_linked_other_user_no_link_button() {
+        Functions\when( 'get_user_meta' )->justReturn( '' );
+        Functions\when( 'get_current_user_id' )->justReturn( 99 ); // anderer User
+        Functions\when( 'esc_html_e' )->justReturn( null );
+
+        $user     = new WP_User();
+        $user->ID = 1;
+
+        $profile = new OIDC_Profile();
+        ob_start();
+        $profile->render_profile_section( $user );
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString( 'dashicons-no-alt', $output );
+        $this->assertStringNotContainsString( 'button-primary', $output );
+    }
 }

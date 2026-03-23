@@ -70,6 +70,13 @@ class TestableOIDCAuth extends OIDC_Auth {
         $method->setAccessible( true );
         return $method->invoke( $this, $access_token );
     }
+
+    public function public_authenticate_user( $userinfo, $tokens = array() ) {
+        $ref    = new ReflectionObject( $this );
+        $method = $ref->getMethod( 'authenticate_user' );
+        $method->setAccessible( true );
+        return $method->invoke( $this, $userinfo, $tokens );
+    }
 }
 
 class AuthTest extends WpTestCase {
@@ -842,5 +849,290 @@ class AuthTest extends WpTestCase {
 
         $this->assertIsArray( $result );
         $this->assertSame( 'user@example.com', $result['email'] );
+    }
+
+    // -------------------------------------------------------------------------
+    // check_session_validity – Logout-Pfad (Token abgelaufen)
+    // -------------------------------------------------------------------------
+
+    public function test_check_session_validity_expired_token_logs_out() {
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_session_management' ) { return '1'; }
+            if ( $key === 'oidc_enable_refresh' )     { return '1'; }
+            return $default;
+        } );
+        Functions\when( 'is_user_logged_in' )->justReturn( true );
+        Functions\when( 'get_current_user_id' )->justReturn( 5 );
+        Functions\when( 'get_user_meta' )->justReturn( 'some-subject' );
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'wp_login_url' )->justReturn( 'https://example.com/wp-login.php' );
+        Functions\when( 'add_query_arg' )->justReturn( 'https://example.com/wp-login.php?oidc_error=...' );
+
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        // OIDC_Tokens::get_valid_access_token() → WP_Error simulieren
+        Functions\when( 'get_transient' )->justReturn( false );
+        Functions\when( 'get_user_meta' )->alias( function ( $id, $key, $single ) {
+            if ( $key === '_oidc_subject' ) { return 'user-sub'; }
+            if ( $key === '_oidc_access_token_expires' ) { return time() - 100; } // abgelaufen
+            if ( $key === '_oidc_refresh_token' ) { return ''; } // kein Refresh
+            return '';
+        } );
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_logout' )->justReturn( null );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->check_session_validity();
+    }
+
+    // -------------------------------------------------------------------------
+    // authenticate_user (private via Reflection)
+    // -------------------------------------------------------------------------
+
+    public function test_authenticate_user_active_claim_false_calls_login_error() {
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_active_claim' ) { return 'active'; }
+            return $default;
+        } );
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_login_url' )->justReturn( 'https://example.com/wp-login.php' );
+        Functions\when( 'add_query_arg' )->justReturn( 'https://example.com/wp-login.php?oidc_error=...' );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->public_authenticate_user( array( 'email' => 'user@example.com', 'active' => false ) );
+    }
+
+    public function test_authenticate_user_invalid_email_calls_login_error() {
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        Functions\when( 'get_option' )->justReturn( '' );
+        Functions\when( 'sanitize_email' )->returnArg();
+        Functions\when( 'is_email' )->justReturn( false );
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_login_url' )->justReturn( 'https://example.com/wp-login.php' );
+        Functions\when( 'add_query_arg' )->justReturn( 'https://example.com/wp-login.php?oidc_error=...' );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->public_authenticate_user( array( 'email' => 'not-an-email' ) );
+    }
+
+    public function test_authenticate_user_no_user_no_create_calls_login_error() {
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
+            if ( $key === 'oidc_active_claim' )  { return ''; }
+            if ( $key === 'oidc_create_user' )   { return false; }
+            return $default;
+        } );
+        Functions\when( 'sanitize_email' )->returnArg();
+        Functions\when( 'is_email' )->justReturn( true );
+        Functions\when( 'sanitize_text_field' )->returnArg();
+        Functions\when( 'get_users' )->justReturn( array() );    // kein User per Subject
+        Functions\when( 'get_user_by' )->justReturn( false );    // kein User per E-Mail
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_login_url' )->justReturn( 'https://example.com/wp-login.php' );
+        Functions\when( 'add_query_arg' )->justReturn( 'https://example.com/wp-login.php?oidc_error=...' );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->public_authenticate_user( array( 'email' => 'new@example.com', 'sub' => 'sub123' ) );
+    }
+
+    public function test_authenticate_user_creates_new_user_and_logs_in() {
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        $newUser     = new WP_User();
+        $newUser->ID = 42;
+        $newUser->user_login = 'newuser';
+
+        Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
+            if ( $key === 'oidc_active_claim' )   { return ''; }
+            if ( $key === 'oidc_create_user' )    { return true; }
+            if ( $key === 'oidc_default_role' )   { return 'subscriber'; }
+            if ( $key === 'oidc_sync_avatar' )    { return ''; }
+            if ( $key === 'oidc_remember_me' )    { return 'never'; }
+            if ( $key === 'oidc_enable_refresh' ) { return ''; }
+            return $default;
+        } );
+        Functions\when( 'sanitize_email' )->returnArg();
+        Functions\when( 'is_email' )->justReturn( true );
+        Functions\when( 'sanitize_text_field' )->returnArg();
+        Functions\when( 'get_users' )->justReturn( array() );
+        Functions\when( 'get_user_by' )->justReturn( false );
+        Functions\when( 'sanitize_user' )->returnArg();
+        Functions\when( 'username_exists' )->justReturn( false );
+        Functions\when( 'wp_insert_user' )->justReturn( 42 );
+        Functions\when( 'wp_generate_password' )->justReturn( 'randompass' );
+        Functions\when( 'get_user_by' )->justReturn( $newUser );
+        Functions\when( 'update_user_meta' )->justReturn( true );
+        Functions\when( 'wp_set_current_user' )->justReturn( null );
+        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
+        Functions\when( 'do_action' )->justReturn( null );
+        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->public_authenticate_user(
+            array( 'email' => 'new@example.com', 'sub' => 'sub123' ),
+            array( 'id_token' => 'tok', 'access_token' => 'acc' )
+        );
+    }
+
+    public function test_authenticate_user_existing_user_updates_and_logs_in() {
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        $existingUser     = new WP_User();
+        $existingUser->ID = 7;
+        $existingUser->user_login = 'existinguser';
+
+        Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
+            if ( $key === 'oidc_active_claim' )   { return ''; }
+            if ( $key === 'oidc_sync_avatar' )    { return ''; }
+            if ( $key === 'oidc_remember_me' )    { return 'always'; }
+            if ( $key === 'oidc_enable_refresh' ) { return ''; }
+            return $default;
+        } );
+        Functions\when( 'sanitize_email' )->returnArg();
+        Functions\when( 'is_email' )->justReturn( true );
+        Functions\when( 'sanitize_text_field' )->returnArg();
+        Functions\when( 'get_users' )->justReturn( array( $existingUser ) ); // per Subject gefunden
+        Functions\when( 'wp_update_user' )->justReturn( 7 );
+        Functions\when( 'update_user_meta' )->justReturn( true );
+        Functions\when( 'wp_set_current_user' )->justReturn( null );
+        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
+        Functions\when( 'do_action' )->justReturn( null );
+        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->public_authenticate_user(
+            array(
+                'email'       => 'existing@example.com',
+                'sub'         => 'sub-exists',
+                'given_name'  => 'Max',
+                'family_name' => 'Muster',
+                'name'        => 'Max Muster',
+            ),
+            array()
+        );
+    }
+
+    public function test_authenticate_user_finds_user_by_email_fallback() {
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        $existingUser     = new WP_User();
+        $existingUser->ID = 9;
+        $existingUser->user_login = 'emailuser';
+
+        Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
+            if ( $key === 'oidc_active_claim' )   { return ''; }
+            if ( $key === 'oidc_sync_avatar' )    { return '1'; }
+            if ( $key === 'oidc_remember_me' )    { return 'never'; }
+            if ( $key === 'oidc_enable_refresh' ) { return ''; }
+            return $default;
+        } );
+        Functions\when( 'sanitize_email' )->returnArg();
+        Functions\when( 'is_email' )->justReturn( true );
+        Functions\when( 'sanitize_text_field' )->returnArg();
+        Functions\when( 'esc_url_raw' )->returnArg();
+        Functions\when( 'get_users' )->justReturn( array() ); // kein User per Subject
+        Functions\when( 'get_user_by' )->justReturn( $existingUser ); // User per E-Mail gefunden
+        Functions\when( 'update_user_meta' )->justReturn( true );
+        Functions\when( 'wp_update_user' )->justReturn( 9 );
+        Functions\when( 'wp_set_current_user' )->justReturn( null );
+        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
+        Functions\when( 'do_action' )->justReturn( null );
+        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->public_authenticate_user(
+            array(
+                'email'   => 'email@example.com',
+                'sub'     => 'new-sub',
+                'picture' => 'https://cdn.example.com/avatar.jpg',
+            ),
+            array()
+        );
+    }
+
+    public function test_authenticate_user_create_user_with_username_collision() {
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        $newUser     = new WP_User();
+        $newUser->ID = 55;
+        $newUser->user_login = 'newuser_abc12';
+
+        Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
+            if ( $key === 'oidc_active_claim' )   { return ''; }
+            if ( $key === 'oidc_create_user' )    { return true; }
+            if ( $key === 'oidc_default_role' )   { return 'subscriber'; }
+            if ( $key === 'oidc_sync_avatar' )    { return ''; }
+            if ( $key === 'oidc_remember_me' )    { return 'never'; }
+            if ( $key === 'oidc_enable_refresh' ) { return ''; }
+            return $default;
+        } );
+        Functions\when( 'sanitize_email' )->returnArg();
+        Functions\when( 'is_email' )->justReturn( true );
+        Functions\when( 'sanitize_text_field' )->returnArg();
+        Functions\when( 'get_users' )->justReturn( array() );
+        Functions\when( 'get_user_by' )->justReturn( false );
+        Functions\when( 'sanitize_user' )->returnArg();
+        Functions\when( 'username_exists' )->justReturn( true ); // Kollision!
+        Functions\when( 'wp_generate_password' )->justReturn( 'abc12' );
+        Functions\when( 'wp_insert_user' )->justReturn( 55 );
+        Functions\when( 'get_user_by' )->justReturn( $newUser );
+        Functions\when( 'update_user_meta' )->justReturn( true );
+        Functions\when( 'wp_set_current_user' )->justReturn( null );
+        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
+        Functions\when( 'do_action' )->justReturn( null );
+        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->public_authenticate_user(
+            array(
+                'email'              => 'new@example.com',
+                'sub'                => 'sub-new',
+                'preferred_username' => 'newuser',
+            ),
+            array()
+        );
     }
 }
