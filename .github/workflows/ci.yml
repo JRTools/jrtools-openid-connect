@@ -48,7 +48,7 @@ jobs:
           tools: composer:v2
 
       - name: Composer-Cache
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e5684 # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: vendor
           key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
@@ -84,7 +84,7 @@ jobs:
           tools: composer:v2
 
       - name: Composer-Cache
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e5684 # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: vendor
           key: composer-8.2-${{ hashFiles('composer.json') }}
@@ -120,7 +120,7 @@ jobs:
           tools: composer:v2
 
       - name: Composer-Cache
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e5684 # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: vendor
           key: composer-8.2-${{ hashFiles('composer.json') }}
@@ -152,7 +152,7 @@ jobs:
           tools: composer:v2
 
       - name: Composer-Cache
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e5684 # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: vendor
           key: composer-8.2-${{ hashFiles('composer.json') }}
@@ -181,7 +181,7 @@ jobs:
           tools: composer:v2
 
       - name: Composer-Cache
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e5684 # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: vendor
           key: composer-8.2-${{ hashFiles('composer.json') }}
