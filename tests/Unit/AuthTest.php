@@ -298,4 +298,90 @@ class AuthTest extends WpTestCase {
         $this->auth->check_session_validity();
         $this->addToAssertionCount( 1 );
     }
+
+    // -------------------------------------------------------------------------
+    // filter_avatar_url
+    // -------------------------------------------------------------------------
+
+    public function test_filter_avatar_url_returns_original_when_no_oidc_avatar() {
+        Functions\when( 'get_user_by' )->alias( function ( $field, $value ) {
+            $user     = new WP_User();
+            $user->ID = 10;
+            return $user;
+        } );
+        Functions\when( 'get_user_meta' )->justReturn( '' );
+
+        $result = $this->auth->filter_avatar_url( 'https://gravatar.com/original', 10, array() );
+
+        $this->assertSame( 'https://gravatar.com/original', $result );
+    }
+
+    public function test_filter_avatar_url_returns_oidc_avatar_when_set() {
+        Functions\when( 'get_user_by' )->alias( function ( $field, $value ) {
+            $user     = new WP_User();
+            $user->ID = 10;
+            return $user;
+        } );
+        Functions\when( 'get_user_meta' )->justReturn( 'https://cdn.example.com/avatar.png' );
+        Functions\when( 'esc_url' )->returnArg();
+
+        $result = $this->auth->filter_avatar_url( 'https://gravatar.com/original', 10, array() );
+
+        $this->assertSame( 'https://cdn.example.com/avatar.png', $result );
+    }
+
+    public function test_filter_avatar_url_handles_wp_user_object() {
+        $user     = new WP_User();
+        $user->ID = 42;
+
+        Functions\when( 'get_user_meta' )->justReturn( 'https://cdn.example.com/pic.jpg' );
+        Functions\when( 'esc_url' )->returnArg();
+
+        $result = $this->auth->filter_avatar_url( 'https://gravatar.com/fallback', $user, array() );
+
+        $this->assertSame( 'https://cdn.example.com/pic.jpg', $result );
+    }
+
+    public function test_filter_avatar_url_handles_email_string() {
+        Functions\when( 'get_user_by' )->alias( function ( $field, $value ) {
+            $user     = new WP_User();
+            $user->ID = 5;
+            return $user;
+        } );
+        Functions\when( 'get_user_meta' )->justReturn( '' );
+
+        $result = $this->auth->filter_avatar_url( 'https://gravatar.com/original', 'user@example.com', array() );
+
+        $this->assertSame( 'https://gravatar.com/original', $result );
+    }
+
+    public function test_filter_avatar_url_handles_wp_post_object() {
+        $post              = new WP_Post( 7 );
+
+        Functions\when( 'get_user_by' )->alias( function ( $field, $value ) {
+            $user     = new WP_User();
+            $user->ID = 7;
+            return $user;
+        } );
+        Functions\when( 'get_user_meta' )->justReturn( '' );
+
+        $result = $this->auth->filter_avatar_url( 'https://gravatar.com/original', $post, array() );
+
+        $this->assertSame( 'https://gravatar.com/original', $result );
+    }
+
+    public function test_filter_avatar_url_handles_wp_comment_object() {
+        $comment                       = new WP_Comment( 'author@example.com' );
+
+        Functions\when( 'get_user_by' )->alias( function ( $field, $value ) {
+            $user     = new WP_User();
+            $user->ID = 8;
+            return $user;
+        } );
+        Functions\when( 'get_user_meta' )->justReturn( '' );
+
+        $result = $this->auth->filter_avatar_url( 'https://gravatar.com/original', $comment, array() );
+
+        $this->assertSame( 'https://gravatar.com/original', $result );
+    }
 }

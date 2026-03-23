@@ -278,4 +278,23 @@ class AdminTest extends WpTestCase {
 
         $this->assertStringContainsString( '<p>', $output );
     }
+
+    // -------------------------------------------------------------------------
+    // enqueue_scripts – korrekter Hook
+    // -------------------------------------------------------------------------
+
+    public function test_enqueue_scripts_enqueues_on_correct_hook() {
+        Functions\when( 'esc_attr' )->returnArg();
+        Functions\when( 'wp_login_url' )->justReturn( 'https://example.com/wp-login.php' );
+        Functions\when( 'add_query_arg' )->justReturn( 'https://example.com/wp-login.php?oidc_callback=1' );
+        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/admin-ajax.php' );
+        Functions\when( 'wp_create_nonce' )->justReturn( 'test-nonce' );
+        Functions\when( '__' )->returnArg();
+        Functions\expect( 'wp_enqueue_style' )->once();
+        Functions\expect( 'wp_enqueue_script' )->once();
+        Functions\when( 'wp_localize_script' )->justReturn( null );
+
+        $this->admin->enqueue_scripts( 'settings_page_oidc-client' );
+        $this->addToAssertionCount( 1 );
+    }
 }
