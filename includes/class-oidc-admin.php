@@ -587,7 +587,6 @@ class OIDC_Admin {
     }
 
     public function field_discovery_url() {
-        $value = esc_attr( get_option( 'oidc_discovery_url', '' ) );
         ?>
         <input type="url" id="oidc_discovery_url" name="oidc_discovery_url"
                value="<?php echo esc_attr( get_option( 'oidc_discovery_url', '' ) ); ?>" class="regular-text"
@@ -602,7 +601,6 @@ class OIDC_Admin {
     public function field_text( $args ) {
         $option  = $args['option'];
         $default = isset( $args['default'] ) ? $args['default'] : '';
-        $value   = esc_attr( get_option( $option, $default ) );
         $desc    = isset( $args['description'] ) ? $args['description'] : '';
         printf(
             '<input type="text" id="%1$s" name="%1$s" value="%2$s" class="regular-text" />',
@@ -616,7 +614,6 @@ class OIDC_Admin {
 
     public function field_url( $args ) {
         $option = $args['option'];
-        $value  = esc_attr( get_option( $option, '' ) );
         printf(
             '<input type="url" id="%1$s" name="%1$s" value="%2$s" class="regular-text" />',
             esc_attr( $option ),
@@ -626,7 +623,6 @@ class OIDC_Admin {
 
     public function field_password( $args ) {
         $option = $args['option'];
-        $value  = esc_attr( get_option( $option, '' ) );
         printf(
             '<input type="password" id="%1$s" name="%1$s" value="%2$s" class="regular-text" autocomplete="new-password" />',
             esc_attr( $option ),
@@ -720,7 +716,7 @@ class OIDC_Admin {
     public function sanitize_secret( $value ) {
         // Nur Null-Bytes und Whitespace am Rand entfernen – keine HTML-Stripping
         $value = wp_unslash( $value );
-        $value = preg_replace( '/[\x00]/', '', $value ); // Null-Bytes
+        $value = preg_replace( '/\x00/', '', $value ); // Null-Bytes
         return trim( $value );
     }
 

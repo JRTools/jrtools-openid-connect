@@ -46,12 +46,12 @@ if ( ! class_exists( 'WP_Error' ) ) {
         public string $code    = '';
         public string $message = '';
 
-        public function __construct( string $code = '', string $message = '', mixed $data = '' ) {
+        public function __construct( string $code = '', string $message = '', mixed $_data = '' ) {
             $this->code    = $code;
             $this->message = $message;
         }
 
-        public function get_error_message( string $code = '' ): string {
+        public function get_error_message( string $_code = '' ): string {
             return $this->message;
         }
 
@@ -67,20 +67,20 @@ if ( ! class_exists( 'WP_User' ) ) {
         public array  $roles = array();
         public ?object $data  = null;
 
-        public function set_role( string $role ): void {}
-        public function add_role( string $role ): void {}
+        public function set_role( string $_role ): void { /* Stub – keine Implementierung nötig */ }
+        public function add_role( string $_role ): void { /* Stub – keine Implementierung nötig */ }
     }
 }
 
 if ( ! class_exists( 'WP_REST_Request' ) ) {
     class WP_REST_Request {
-        public function get_param( string $key ): mixed { return null; }
+        public function get_param( string $_key ): mixed { return null; }
         public function get_params(): array { return array(); }
     }
 }
 
 if ( ! class_exists( 'WP_REST_Response' ) ) {
     class WP_REST_Response {
-        public function __construct( mixed $data = null, int $status = 200 ) {}
+        public function __construct( mixed $_data = null, int $_status = 200 ) { /* Stub – keine Implementierung nötig */ }
     }
 }

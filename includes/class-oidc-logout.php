@@ -137,10 +137,8 @@ class OIDC_Logout {
 
         // iss prüfen
         $expected_issuer = get_option( 'oidc_issuer', '' );
-        if ( ! empty( $expected_issuer ) ) {
-            if ( ! isset( $claims['iss'] ) || $claims['iss'] !== $expected_issuer ) {
+        if ( ! empty( $expected_issuer ) && ( ! isset( $claims['iss'] ) || $claims['iss'] !== $expected_issuer ) ) {
                 return new WP_Error( 'logout_token_iss', 'Logout-Token Issuer ungültig.' );
-            }
         }
 
         // aud prüfen

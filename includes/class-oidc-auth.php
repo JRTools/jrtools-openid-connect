@@ -529,7 +529,7 @@ class OIDC_Auth {
     // F6: Avatar-URL-Filter
     // -------------------------------------------------------------------------
 
-    public function filter_avatar_url( $url, $id_or_email, $args ) {
+    public function filter_avatar_url( $url, $id_or_email, $_args ) {
         $user = false;
 
         if ( is_numeric( $id_or_email ) ) {

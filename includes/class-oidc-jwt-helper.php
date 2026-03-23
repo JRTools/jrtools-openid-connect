@@ -175,10 +175,8 @@ class OIDC_JWT_Helper {
      */
     private static function find_jwk( $jwks, $kid ) {
         foreach ( $jwks['keys'] as $key ) {
-            if ( isset( $key['kty'] ) && 'RSA' === $key['kty'] ) {
-                if ( empty( $kid ) || ( isset( $key['kid'] ) && $key['kid'] === $kid ) ) {
-                    return $key;
-                }
+            if ( isset( $key['kty'] ) && 'RSA' === $key['kty'] && ( empty( $kid ) || ( isset( $key['kid'] ) && $key['kid'] === $kid ) ) ) {
+                return $key;
             }
         }
         return null;

@@ -9,7 +9,7 @@ set -euo pipefail
 SLUG="oidc-client"
 VERSION=$(grep "^[ \t]*\* Version:" oidc-client.php | awk '{print $NF}')
 
-if [ -z "${VERSION}" ]; then
+if [[ -z "${VERSION}" ]]; then
     echo "FEHLER: Version konnte nicht aus oidc-client.php gelesen werden." >&2
     exit 1
 fi

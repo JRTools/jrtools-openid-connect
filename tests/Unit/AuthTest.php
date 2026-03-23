@@ -16,7 +16,7 @@ require_once __DIR__ . '/WpTestCase.php';
 // OIDC_Auth benötigt OIDC_Log, OIDC_Tokens – Stubs bereitstellen
 if ( ! class_exists( 'OIDC_Log' ) ) {
     class OIDC_Log {
-        public static function write( $user_id, $success, $message ) {}
+        public static function write( $_user_id, $_success, $_message ) { /* Stub – keine Implementierung nötig */ }
     }
 }
 

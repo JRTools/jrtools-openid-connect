@@ -49,7 +49,7 @@ class OIDC_Profile {
     // F3: Passwort-Änderung sperren
     // -------------------------------------------------------------------------
 
-    public function maybe_lock_password( WP_Error $errors, $update, $user ) {
+    public function maybe_lock_password( WP_Error $errors, $_update, $user ) {
         if ( get_option( 'oidc_lock_password', '' ) !== '1' ) {
             return;
         }

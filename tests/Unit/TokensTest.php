@@ -12,10 +12,6 @@ use Brain\Monkey\Functions;
 
 class TokensTest extends WpTestCase {
 
-    protected function setUp(): void {
-        parent::setUp();
-    }
-
     // Hilfsmethode: private Methode via Reflexion aufrufen
     private function call_private( $object, $method, ...$args ) {
         $ref = new ReflectionObject( $object );
