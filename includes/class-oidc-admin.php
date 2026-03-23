@@ -716,7 +716,7 @@ class OIDC_Admin {
     public function sanitize_secret( $value ) {
         // Nur Null-Bytes und Whitespace am Rand entfernen – keine HTML-Stripping
         $value = wp_unslash( $value );
-        $value = preg_replace( '/\x00/', '', $value ); // Null-Bytes
+        $value = str_replace( "\x00", '', $value ); // Null-Bytes
         return trim( $value );
     }
 
@@ -792,7 +792,7 @@ class OIDC_Admin {
         </p>
         <script>
         (function () {
-            var rolesHtml = 
+            var rolesHtml =
             <?php
                 $opts = '';
 			foreach ( $wp_roles as $role_key => $role_data ) {

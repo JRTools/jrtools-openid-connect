@@ -127,7 +127,7 @@ class RolesTest extends WpTestCase {
         Functions\when( 'get_user_by' )->justReturn( $user_stub );
         Functions\when( 'sanitize_text_field' )->returnArg();
         Functions\when( 'wp_roles' )->justReturn( new class {
-            public function is_role( $role ) {
+            public function is_role( $_role ) {
                 return false; // Rolle existiert nicht in WordPress
             }
         } );

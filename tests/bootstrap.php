@@ -49,7 +49,7 @@ if ( ! class_exists( 'WP_Error' ) ) {
             $this->data    = $data;
         }
 
-        public function get_error_message( $code = '' ) {
+        public function get_error_message( $_code = '' ) {
             return $this->message;
         }
 
