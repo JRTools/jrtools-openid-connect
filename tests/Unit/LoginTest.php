@@ -332,4 +332,31 @@ class LoginTest extends WpTestCase {
 
         $this->assertStringContainsString( 'oidc-login-button', $output );
     }
+
+    public function test_render_login_button_with_icon_url_outputs_img() {
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_client_id' ) {
+                return 'my-client-id';
+            }
+            if ( $key === 'oidc_button_icon_url' ) {
+                return 'https://cdn.example.com/icon.png';
+            }
+            return $default;
+        } );
+        Functions\when( 'add_query_arg' )->justReturn( 'https://example.com/wp-login.php?oidc_login=1' );
+        Functions\when( 'wp_login_url' )->justReturn( 'https://example.com/wp-login.php' );
+        Functions\when( 'wp_nonce_url' )->justReturn( 'https://example.com/wp-login.php?oidc_login=1&_wpnonce=abc' );
+        Functions\when( 'esc_url' )->returnArg();
+        Functions\when( 'esc_html' )->returnArg();
+        Functions\when( 'esc_html_e' )->justReturn( null );
+        Functions\when( '__' )->returnArg();
+
+        $login = new OIDC_Login();
+        ob_start();
+        $login->render_login_button();
+        $output = ob_get_clean();
+
+        $this->assertStringContainsString( '<img', $output );
+        $this->assertStringContainsString( 'https://cdn.example.com/icon.png', $output );
+    }
 }
