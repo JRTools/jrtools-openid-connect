@@ -131,4 +131,184 @@ class TokensTest extends WpTestCase {
         $result = $tokens->get_id_token( 42 );
         $this->assertSame( $plaintext, $result );
     }
+
+    // -------------------------------------------------------------------------
+    // store_tokens
+    // -------------------------------------------------------------------------
+
+    public function test_store_tokens_only_saves_id_token_when_refresh_disabled() {
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_enable_refresh' ) {
+                return '';
+            }
+            if ( $key === 'oidc_token_encryption' ) {
+                return '';
+            }
+            return $default;
+        } );
+
+        Functions\expect( 'update_user_meta' )
+            ->once()
+            ->with( 1, '_oidc_id_token', 'my-id-token' );
+
+        $tokens = new OIDC_Tokens();
+        $tokens->store_tokens( 1, array(
+            'id_token'     => 'my-id-token',
+            'access_token' => 'my-access-token',
+            'refresh_token' => 'my-refresh-token',
+        ) );
+    }
+
+    public function test_store_tokens_saves_all_tokens_when_refresh_enabled() {
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_enable_refresh' ) {
+                return '1';
+            }
+            if ( $key === 'oidc_token_encryption' ) {
+                return '';
+            }
+            return $default;
+        } );
+
+        $update_calls = array();
+        Functions\when( 'update_user_meta' )->alias( function ( $user_id, $meta_key, $value ) use ( &$update_calls ) {
+            $update_calls[] = $meta_key;
+        } );
+
+        $tokens = new OIDC_Tokens();
+        $tokens->store_tokens( 1, array(
+            'id_token'     => 'id-t',
+            'access_token' => 'acc-t',
+            'refresh_token' => 'ref-t',
+            'expires_in'   => 3600,
+        ) );
+
+        $this->assertContains( '_oidc_id_token', $update_calls );
+        $this->assertContains( '_oidc_access_token', $update_calls );
+        $this->assertContains( '_oidc_refresh_token', $update_calls );
+        $this->assertContains( '_oidc_access_token_expires', $update_calls );
+    }
+
+    public function test_store_tokens_skips_missing_id_token() {
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_enable_refresh' ) {
+                return '';
+            }
+            return $default;
+        } );
+
+        Functions\expect( 'update_user_meta' )->never();
+
+        $tokens = new OIDC_Tokens();
+        $tokens->store_tokens( 1, array() );
+    }
+
+    public function test_store_tokens_default_expires_in_when_missing() {
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_enable_refresh' ) {
+                return '1';
+            }
+            if ( $key === 'oidc_token_encryption' ) {
+                return '';
+            }
+            return $default;
+        } );
+
+        $expires_value = null;
+        Functions\when( 'update_user_meta' )->alias( function ( $user_id, $meta_key, $value ) use ( &$expires_value ) {
+            if ( $meta_key === '_oidc_access_token_expires' ) {
+                $expires_value = $value;
+            }
+        } );
+
+        $tokens = new OIDC_Tokens();
+        $tokens->store_tokens( 1, array( 'access_token' => 'acc' ) );
+
+        // Default: 3600 Sekunden ab jetzt
+        $this->assertNotNull( $expires_value );
+        $this->assertGreaterThan( time() + 3500, $expires_value );
+    }
+
+    // -------------------------------------------------------------------------
+    // clear_tokens / clear_all_tokens
+    // -------------------------------------------------------------------------
+
+    public function test_clear_tokens_deletes_access_and_refresh_meta() {
+        $deleted = array();
+        Functions\when( 'delete_user_meta' )->alias( function ( $user_id, $meta_key ) use ( &$deleted ) {
+            $deleted[] = $meta_key;
+        } );
+
+        $tokens = new OIDC_Tokens();
+        $tokens->clear_tokens( 99 );
+
+        $this->assertContains( '_oidc_access_token', $deleted );
+        $this->assertContains( '_oidc_access_token_expires', $deleted );
+        $this->assertContains( '_oidc_refresh_token', $deleted );
+        $this->assertNotContains( '_oidc_id_token', $deleted );
+    }
+
+    public function test_clear_all_tokens_also_deletes_id_token() {
+        $deleted = array();
+        Functions\when( 'delete_user_meta' )->alias( function ( $user_id, $meta_key ) use ( &$deleted ) {
+            $deleted[] = $meta_key;
+        } );
+
+        $tokens = new OIDC_Tokens();
+        $tokens->clear_all_tokens( 99 );
+
+        $this->assertContains( '_oidc_access_token', $deleted );
+        $this->assertContains( '_oidc_refresh_token', $deleted );
+        $this->assertContains( '_oidc_id_token', $deleted );
+    }
+
+    // -------------------------------------------------------------------------
+    // get_valid_access_token
+    // -------------------------------------------------------------------------
+
+    public function test_get_valid_access_token_returns_token_when_valid() {
+        Functions\when( 'get_option' )->justReturn( '' );
+
+        Functions\when( 'get_user_meta' )->alias( function ( $user_id, $meta_key, $single ) {
+            if ( $meta_key === '_oidc_access_token' ) {
+                return 'valid-access-token';
+            }
+            if ( $meta_key === '_oidc_access_token_expires' ) {
+                return (string) ( time() + 3600 );
+            }
+            return '';
+        } );
+
+        $tokens = new OIDC_Tokens();
+        $result = $tokens->get_valid_access_token( 1 );
+
+        $this->assertSame( 'valid-access-token', $result );
+    }
+
+    public function test_get_valid_access_token_returns_error_when_no_refresh_token() {
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            return $default; // oidc_token_encryption = ''
+        } );
+
+        Functions\when( 'get_user_meta' )->alias( function ( $user_id, $meta_key, $single ) {
+            if ( $meta_key === '_oidc_access_token' ) {
+                return ''; // kein Token
+            }
+            if ( $meta_key === '_oidc_access_token_expires' ) {
+                return '0';
+            }
+            if ( $meta_key === '_oidc_refresh_token' ) {
+                return ''; // kein Refresh-Token
+            }
+            return '';
+        } );
+
+        Functions\when( '__' )->returnArg();
+
+        $tokens = new OIDC_Tokens();
+        $result = $tokens->get_valid_access_token( 1 );
+
+        $this->assertInstanceOf( WP_Error::class, $result );
+        $this->assertSame( 'no_refresh_token', $result->get_error_code() );
+    }
 }

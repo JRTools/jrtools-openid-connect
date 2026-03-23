@@ -56,6 +56,12 @@ if ( ! class_exists( 'WP_Error' ) ) {
         public function get_error_code() {
             return $this->code;
         }
+
+        public function add( $code, $message, $data = '' ) {
+            $this->code    = $code;
+            $this->message = $message;
+            $this->data    = $data;
+        }
     }
 }
 
@@ -64,7 +70,8 @@ if ( ! class_exists( 'WP_User' ) ) {
     class WP_User {
         public $ID   = 0;
         public $data;
-        public $roles = array();
+        public $roles        = array();
+        public $user_email   = '';
         private $set_role_calls  = array();
         private $add_role_calls  = array();
 
