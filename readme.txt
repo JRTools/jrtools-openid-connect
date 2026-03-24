@@ -107,6 +107,14 @@ Register `https://your-site.com/wp-json/oidc-client/v1/backchannel-logout` as th
 
 == Changelog ==
 
+= 1.1.0 – 2026-03-24 =
+* Backchannel-Logout-URL korrigiert
+* Mindest-PHP-Version auf 8.1 angehoben
+* CI-Pipeline mit PHPStan, Infection und SonarCloud erweitert
+* Testabdeckung deutlich erhöht
+* SonarCloud-Issues behoben
+* Abhängigkeiten aktualisiert
+
 = 1.0.0 – 2026-03-20 =
 * Initial release
 * Authorization Code Flow with PKCE (S256)

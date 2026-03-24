@@ -6,6 +6,23 @@ Das Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.1.0] – 2026-03-24
+
+### Geändert
+- CI-Pipeline ausgebaut: PHPStan, Infection-Mutation-Testing und SonarCloud-Integration ergänzt
+- Backchannel-Logout-URL korrigiert (`/wp-json/oidc-client/v1/backchannel-logout`)
+- Mindest-PHP-Version auf 8.1 angehoben
+
+### Behoben
+- SonarCloud-Issues in Quell- und Testdateien behoben
+- CI-Konfiguration bereinigt (PHPUnit-Flags, PHP-Versionen, Plugin-Check-Ausschlüsse)
+
+### Intern
+- Testabdeckung deutlich erhöht (Login, Logout, Auth, Admin, Profile, Tokens, JWT)
+- Code-Duplikate in Testklassen durch Helper-Methoden reduziert
+- Checkbox-Felder in Admin-Klasse per Loop registriert (weniger Wiederholungen)
+- Abhängigkeiten aktualisiert: `infection/infection` ^0.32, `actions/cache` v5
+
 ## [1.0.0] – 2026-03-20
 
 ### Neu
@@ -42,5 +59,6 @@ Das Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
   Datenbanktabelle protokolliert und sind im Adminbereich einsehbar.
 - **Übersetzungen**: de_DE, en_US, fr_FR, es_ES, sv_SE.
 
-[Unreleased]: https://github.com/johannesroesch/oidc-client/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/johannesroesch/oidc-client/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/johannesroesch/oidc-client/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/johannesroesch/oidc-client/releases/tag/v1.0.0
