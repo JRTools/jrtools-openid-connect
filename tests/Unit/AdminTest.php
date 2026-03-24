@@ -389,6 +389,17 @@ class AdminTest extends WpTestCase {
     // ajax_fetch_discovery
     // -------------------------------------------------------------------------
 
+    /** Gemeinsame Mocks für ajax_fetch_discovery-Tests mit gültiger Berechtigung. */
+    private function setUpDiscoveryMocks(): void {
+        Functions\when( 'check_ajax_referer' )->justReturn( true );
+        Functions\when( 'current_user_can' )->justReturn( true );
+        Functions\when( 'esc_url_raw' )->returnArg();
+        Functions\when( 'wp_unslash' )->returnArg();
+        Functions\when( 'wp_send_json_error' )->alias( function ( $data, $status ) {
+            throw new OidcTestException( 'error:' . $status );
+        } );
+    }
+
     public function test_ajax_fetch_discovery_no_permission_sends_error() {
         Functions\when( 'check_ajax_referer' )->justReturn( true );
         Functions\when( 'current_user_can' )->justReturn( false );
@@ -404,14 +415,8 @@ class AdminTest extends WpTestCase {
 
     public function test_ajax_fetch_discovery_empty_url_sends_error() {
         $_POST['url'] = '';
-        Functions\when( 'check_ajax_referer' )->justReturn( true );
-        Functions\when( 'current_user_can' )->justReturn( true );
-        Functions\when( 'esc_url_raw' )->returnArg();
-        Functions\when( 'wp_unslash' )->returnArg();
+        $this->setUpDiscoveryMocks();
         Functions\when( '__' )->returnArg();
-        Functions\when( 'wp_send_json_error' )->alias( function ( $data, $status ) {
-            throw new OidcTestException( 'error:' . $status );
-        } );
 
         $this->expectException( OidcTestException::class );
         $this->expectExceptionMessage( 'error:400' );
@@ -420,14 +425,8 @@ class AdminTest extends WpTestCase {
 
     public function test_ajax_fetch_discovery_invalid_url_sends_error() {
         $_POST['url'] = 'not-a-url';
-        Functions\when( 'check_ajax_referer' )->justReturn( true );
-        Functions\when( 'current_user_can' )->justReturn( true );
-        Functions\when( 'esc_url_raw' )->returnArg();
-        Functions\when( 'wp_unslash' )->returnArg();
+        $this->setUpDiscoveryMocks();
         Functions\when( '__' )->returnArg();
-        Functions\when( 'wp_send_json_error' )->alias( function ( $data, $status ) {
-            throw new OidcTestException( 'error:' . $status );
-        } );
 
         $this->expectException( OidcTestException::class );
         $this->expectExceptionMessage( 'error:400' );
@@ -436,14 +435,8 @@ class AdminTest extends WpTestCase {
 
     public function test_ajax_fetch_discovery_http_error_sends_error() {
         $_POST['url'] = 'https://provider.example.com/.well-known/openid-configuration';
-        Functions\when( 'check_ajax_referer' )->justReturn( true );
-        Functions\when( 'current_user_can' )->justReturn( true );
-        Functions\when( 'esc_url_raw' )->returnArg();
-        Functions\when( 'wp_unslash' )->returnArg();
+        $this->setUpDiscoveryMocks();
         Functions\when( 'wp_remote_get' )->justReturn( new WP_Error( 'http_request_failed', 'timeout' ) );
-        Functions\when( 'wp_send_json_error' )->alias( function ( $data, $status ) {
-            throw new OidcTestException( 'error:' . $status );
-        } );
 
         $this->expectException( OidcTestException::class );
         $this->expectExceptionMessage( 'error:500' );
@@ -452,16 +445,10 @@ class AdminTest extends WpTestCase {
 
     public function test_ajax_fetch_discovery_non_200_sends_error() {
         $_POST['url'] = 'https://provider.example.com/.well-known/openid-configuration';
-        Functions\when( 'check_ajax_referer' )->justReturn( true );
-        Functions\when( 'current_user_can' )->justReturn( true );
-        Functions\when( 'esc_url_raw' )->returnArg();
-        Functions\when( 'wp_unslash' )->returnArg();
+        $this->setUpDiscoveryMocks();
         Functions\when( 'wp_remote_get' )->justReturn( array() );
         Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( 404 );
         Functions\when( '__' )->returnArg();
-        Functions\when( 'wp_send_json_error' )->alias( function ( $data, $status ) {
-            throw new OidcTestException( 'error:' . $status );
-        } );
 
         $this->expectException( OidcTestException::class );
         $this->expectExceptionMessage( 'error:500' );
@@ -470,17 +457,11 @@ class AdminTest extends WpTestCase {
 
     public function test_ajax_fetch_discovery_invalid_json_sends_error() {
         $_POST['url'] = 'https://provider.example.com/.well-known/openid-configuration';
-        Functions\when( 'check_ajax_referer' )->justReturn( true );
-        Functions\when( 'current_user_can' )->justReturn( true );
-        Functions\when( 'esc_url_raw' )->returnArg();
-        Functions\when( 'wp_unslash' )->returnArg();
+        $this->setUpDiscoveryMocks();
         Functions\when( 'wp_remote_get' )->justReturn( array() );
         Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( 200 );
         Functions\when( 'wp_remote_retrieve_body' )->justReturn( 'not-json' );
         Functions\when( '__' )->returnArg();
-        Functions\when( 'wp_send_json_error' )->alias( function ( $data, $status ) {
-            throw new OidcTestException( 'error:' . $status );
-        } );
 
         $this->expectException( OidcTestException::class );
         $this->expectExceptionMessage( 'error:500' );
