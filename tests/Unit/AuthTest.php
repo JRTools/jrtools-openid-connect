@@ -102,6 +102,28 @@ class AuthTest extends WpTestCase {
         parent::tearDown();
     }
 
+    /**
+     * Gemeinsame Mocks für authenticate_user-Tests: Login-Abschluss (wp_safe_redirect).
+     * Setzt wpdb-Stub und alle Mocks, die für den erfolgreichen Login-Flow nötig sind.
+     */
+    private function setUpLoginMocks(): void {
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+        Functions\when( 'sanitize_email' )->returnArg();
+        Functions\when( 'is_email' )->justReturn( true );
+        Functions\when( 'sanitize_text_field' )->returnArg();
+        Functions\when( 'update_user_meta' )->justReturn( true );
+        Functions\when( 'wp_set_current_user' )->justReturn( null );
+        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
+        Functions\when( 'do_action' )->justReturn( null );
+        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+    }
+
     // -------------------------------------------------------------------------
     // generate_random_string
     // -------------------------------------------------------------------------
@@ -955,10 +977,8 @@ class AuthTest extends WpTestCase {
     }
 
     public function test_authenticate_user_creates_new_user_and_logs_in() {
-        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
-
-        $newUser     = new WP_User();
-        $newUser->ID = 42;
+        $newUser            = new WP_User();
+        $newUser->ID        = 42;
         $newUser->user_login = 'newuser';
 
         Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
@@ -970,27 +990,13 @@ class AuthTest extends WpTestCase {
             if ( $key === 'oidc_enable_refresh' ) { return ''; }
             return $default;
         } );
-        Functions\when( 'sanitize_email' )->returnArg();
-        Functions\when( 'is_email' )->justReturn( true );
-        Functions\when( 'sanitize_text_field' )->returnArg();
         Functions\when( 'get_users' )->justReturn( array() );
-        Functions\when( 'get_user_by' )->justReturn( false );
+        Functions\when( 'get_user_by' )->justReturn( $newUser );
         Functions\when( 'sanitize_user' )->returnArg();
         Functions\when( 'username_exists' )->justReturn( false );
         Functions\when( 'wp_insert_user' )->justReturn( 42 );
         Functions\when( 'wp_generate_password' )->justReturn( 'randompass' );
-        Functions\when( 'get_user_by' )->justReturn( $newUser );
-        Functions\when( 'update_user_meta' )->justReturn( true );
-        Functions\when( 'wp_set_current_user' )->justReturn( null );
-        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
-        Functions\when( 'do_action' )->justReturn( null );
-        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
-        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
-        Functions\when( '__' )->returnArg();
-        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
-        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
-            throw new OidcTestException( $url );
-        } );
+        $this->setUpLoginMocks();
 
         $this->expectException( OidcTestException::class );
         $this->auth->public_authenticate_user(
@@ -1000,10 +1006,8 @@ class AuthTest extends WpTestCase {
     }
 
     public function test_authenticate_user_existing_user_updates_and_logs_in() {
-        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
-
-        $existingUser     = new WP_User();
-        $existingUser->ID = 7;
+        $existingUser            = new WP_User();
+        $existingUser->ID        = 7;
         $existingUser->user_login = 'existinguser';
 
         Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
@@ -1013,22 +1017,9 @@ class AuthTest extends WpTestCase {
             if ( $key === 'oidc_enable_refresh' ) { return ''; }
             return $default;
         } );
-        Functions\when( 'sanitize_email' )->returnArg();
-        Functions\when( 'is_email' )->justReturn( true );
-        Functions\when( 'sanitize_text_field' )->returnArg();
         Functions\when( 'get_users' )->justReturn( array( $existingUser ) ); // per Subject gefunden
         Functions\when( 'wp_update_user' )->justReturn( 7 );
-        Functions\when( 'update_user_meta' )->justReturn( true );
-        Functions\when( 'wp_set_current_user' )->justReturn( null );
-        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
-        Functions\when( 'do_action' )->justReturn( null );
-        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
-        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
-        Functions\when( '__' )->returnArg();
-        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
-        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
-            throw new OidcTestException( $url );
-        } );
+        $this->setUpLoginMocks();
 
         $this->expectException( OidcTestException::class );
         $this->auth->public_authenticate_user(
@@ -1044,10 +1035,8 @@ class AuthTest extends WpTestCase {
     }
 
     public function test_authenticate_user_finds_user_by_email_fallback() {
-        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
-
-        $existingUser     = new WP_User();
-        $existingUser->ID = 9;
+        $existingUser            = new WP_User();
+        $existingUser->ID        = 9;
         $existingUser->user_login = 'emailuser';
 
         Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
@@ -1057,24 +1046,11 @@ class AuthTest extends WpTestCase {
             if ( $key === 'oidc_enable_refresh' ) { return ''; }
             return $default;
         } );
-        Functions\when( 'sanitize_email' )->returnArg();
-        Functions\when( 'is_email' )->justReturn( true );
-        Functions\when( 'sanitize_text_field' )->returnArg();
         Functions\when( 'esc_url_raw' )->returnArg();
         Functions\when( 'get_users' )->justReturn( array() ); // kein User per Subject
         Functions\when( 'get_user_by' )->justReturn( $existingUser ); // User per E-Mail gefunden
-        Functions\when( 'update_user_meta' )->justReturn( true );
         Functions\when( 'wp_update_user' )->justReturn( 9 );
-        Functions\when( 'wp_set_current_user' )->justReturn( null );
-        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
-        Functions\when( 'do_action' )->justReturn( null );
-        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
-        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
-        Functions\when( '__' )->returnArg();
-        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
-        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
-            throw new OidcTestException( $url );
-        } );
+        $this->setUpLoginMocks();
 
         $this->expectException( OidcTestException::class );
         $this->auth->public_authenticate_user(
@@ -1088,10 +1064,8 @@ class AuthTest extends WpTestCase {
     }
 
     public function test_authenticate_user_create_user_with_username_collision() {
-        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
-
-        $newUser     = new WP_User();
-        $newUser->ID = 55;
+        $newUser            = new WP_User();
+        $newUser->ID        = 55;
         $newUser->user_login = 'newuser_abc12';
 
         Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
@@ -1103,27 +1077,13 @@ class AuthTest extends WpTestCase {
             if ( $key === 'oidc_enable_refresh' ) { return ''; }
             return $default;
         } );
-        Functions\when( 'sanitize_email' )->returnArg();
-        Functions\when( 'is_email' )->justReturn( true );
-        Functions\when( 'sanitize_text_field' )->returnArg();
         Functions\when( 'get_users' )->justReturn( array() );
-        Functions\when( 'get_user_by' )->justReturn( false );
+        Functions\when( 'get_user_by' )->justReturn( $newUser );
         Functions\when( 'sanitize_user' )->returnArg();
         Functions\when( 'username_exists' )->justReturn( true ); // Kollision!
         Functions\when( 'wp_generate_password' )->justReturn( 'abc12' );
         Functions\when( 'wp_insert_user' )->justReturn( 55 );
-        Functions\when( 'get_user_by' )->justReturn( $newUser );
-        Functions\when( 'update_user_meta' )->justReturn( true );
-        Functions\when( 'wp_set_current_user' )->justReturn( null );
-        Functions\when( 'wp_set_auth_cookie' )->justReturn( null );
-        Functions\when( 'do_action' )->justReturn( null );
-        Functions\when( 'apply_filters' )->justReturn( 'https://example.com/wp-admin/' );
-        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/' );
-        Functions\when( '__' )->returnArg();
-        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
-        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
-            throw new OidcTestException( $url );
-        } );
+        $this->setUpLoginMocks();
 
         $this->expectException( OidcTestException::class );
         $this->auth->public_authenticate_user(
