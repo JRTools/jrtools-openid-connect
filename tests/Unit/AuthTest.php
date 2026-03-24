@@ -1250,6 +1250,149 @@ class AuthTest extends WpTestCase {
         $this->fail( 'Expected OidcTestException not thrown.' );
     }
 
+    // -------------------------------------------------------------------------
+    // Konstruktor – Avatar-Filter wird bei sync_avatar='1' registriert
+    // -------------------------------------------------------------------------
+
+    public function test_constructor_registers_avatar_filter_when_sync_avatar_enabled() {
+        $filter_called = false;
+        Functions\when( 'add_action' )->justReturn( null );
+        Functions\when( 'add_filter' )->alias( function ( $hook ) use ( &$filter_called ) {
+            if ( $hook === 'get_avatar_url' ) {
+                $filter_called = true;
+            }
+        } );
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_sync_avatar' ) { return '1'; }
+            return $default;
+        } );
+
+        new TestableOIDCAuth();
+        $this->assertTrue( $filter_called );
+    }
+
+    // -------------------------------------------------------------------------
+    // handle_callback – Nonce-Mismatch
+    // -------------------------------------------------------------------------
+
+    public function test_handle_callback_nonce_mismatch_calls_login_error() {
+        $_GET['oidc_callback'] = '1';
+        $_GET['code']          = 'auth-code';
+        $_GET['state']         = 'validstate';
+
+        $GLOBALS['wpdb'] = new class { public $prefix = 'wp_'; public function insert( $t, $d, $f ) {} };
+
+        $nonce  = 'mynonce';
+        $claims = array(
+            'sub'   => 'sub-x',
+            'aud'   => 'client-x',
+            'iss'   => '',
+            'iat'   => time() - 10,
+            'exp'   => time() + 3600,
+            'nonce' => $nonce,
+        );
+        $id_token = rtrim( strtr( base64_encode( json_encode( array( 'alg' => 'none' ) ) ), '+/', '-_' ), '=' )
+            . '.' . rtrim( strtr( base64_encode( json_encode( $claims ) ), '+/', '-_' ), '=' )
+            . '.fakesig';
+
+        Functions\when( 'sanitize_text_field' )->returnArg();
+        Functions\when( 'wp_unslash' )->returnArg();
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'add_query_arg' )->justReturn( 'https://example.com/wp-login.php?oidc_error=...' );
+        Functions\when( 'wp_login_url' )->justReturn( 'https://example.com/wp-login.php' );
+        Functions\when( 'current_time' )->justReturn( '2026-01-01 12:00:00' );
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_token_endpoint' )    { return 'https://provider.example.com/token'; }
+            if ( $key === 'oidc_client_id' )         { return 'client-x'; }
+            if ( $key === 'oidc_token_auth_method' ) { return 'client_secret_post'; }
+            if ( $key === 'oidc_issuer' )            { return ''; }
+            if ( $key === 'oidc_jwks_uri' )          { return ''; }
+            return $default;
+        } );
+        Functions\when( 'get_transient' )->alias( function ( $key ) {
+            if ( strpos( $key, 'oidc_state_' ) === 0 ) { return 1; }
+            if ( strpos( $key, 'oidc_pkce_' ) === 0 )  { return ''; }
+            if ( strpos( $key, 'oidc_nonce_' ) === 0 ) { return false; } // Nonce ungültig!
+            return false;
+        } );
+        Functions\when( 'delete_transient' )->justReturn( true );
+        Functions\when( 'wp_remote_post' )->justReturn( array() );
+        Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( 200 );
+        Functions\when( 'wp_remote_retrieve_body' )->justReturn(
+            json_encode( array( 'access_token' => 'acc', 'id_token' => $id_token ) )
+        );
+        Functions\when( 'wp_safe_redirect' )->alias( function ( $url ) {
+            throw new OidcTestException( $url );
+        } );
+
+        try {
+            $this->auth->handle_callback();
+        } catch ( OidcTestException $e ) {
+            unset( $GLOBALS['wpdb'] );
+            $this->assertNotEmpty( $e->getMessage() );
+            return;
+        }
+        unset( $GLOBALS['wpdb'] );
+        $this->fail( 'Expected OidcTestException not thrown.' );
+    }
+
+    // -------------------------------------------------------------------------
+    // authenticate_user – kein sub → get_users wird übersprungen
+    // -------------------------------------------------------------------------
+
+    public function test_authenticate_user_no_sub_skips_get_users() {
+        $existingUser             = new WP_User();
+        $existingUser->ID         = 11;
+        $existingUser->user_login = 'nosubuser';
+
+        Functions\when( 'get_option' )->alias( function ( $key, $default = false ) {
+            if ( $key === 'oidc_active_claim' )   { return ''; }
+            if ( $key === 'oidc_sync_avatar' )    { return ''; }
+            if ( $key === 'oidc_remember_me' )    { return 'never'; }
+            if ( $key === 'oidc_enable_refresh' ) { return ''; }
+            return $default;
+        } );
+        Functions\expect( 'get_users' )->never();
+        Functions\when( 'get_user_by' )->justReturn( $existingUser );
+        Functions\when( 'wp_update_user' )->justReturn( 11 );
+        $this->setUpLoginMocks();
+
+        $this->expectException( OidcTestException::class );
+        $this->auth->public_authenticate_user(
+            array( 'email' => 'nosub@example.com' ), // kein 'sub'
+            array()
+        );
+    }
+
+    // -------------------------------------------------------------------------
+    // validate_id_token – aud als Array
+    // -------------------------------------------------------------------------
+
+    public function test_validate_id_token_audience_as_array_returns_claims() {
+        Functions\when( '__' )->returnArg();
+        Functions\when( 'get_option' )->alias( function ( $key, $default = '' ) {
+            if ( $key === 'oidc_issuer' )    { return ''; }
+            if ( $key === 'oidc_client_id' ) { return 'my-client'; }
+            if ( $key === 'oidc_jwks_uri' )  { return ''; }
+            return $default;
+        } );
+
+        $claims  = array(
+            'exp' => time() + 3600,
+            'iat' => time() - 60,
+            'sub' => 'user-aud',
+            'aud' => array( 'my-client', 'other-client' ), // Array!
+        );
+        $header  = rtrim( strtr( base64_encode( json_encode( array( 'alg' => 'none' ) ) ), '+/', '-_' ), '=' );
+        $payload = rtrim( strtr( base64_encode( json_encode( $claims ) ), '+/', '-_' ), '=' );
+        $jwt     = $header . '.' . $payload . '.';
+
+        $result = $this->auth->public_validate_id_token( $jwt );
+
+        $this->assertIsArray( $result );
+        $this->assertSame( 'user-aud', $result['sub'] );
+    }
+
     public function test_handle_callback_link_pending_updates_meta_and_redirects() {
         $_GET['oidc_callback'] = '1';
         $_GET['code']          = 'auth-code';
