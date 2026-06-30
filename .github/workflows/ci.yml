@@ -13,6 +13,7 @@ jobs:
   plugin-check:
     name: WordPress Plugin Check
     runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
       - name: Checkout
@@ -71,6 +72,8 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -126,7 +129,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v3
+        uses: SonarSource/sonarcloud-github-action@383f7e52eae3ab0510c3cb0e7d9d150bbaeab838 # v3
         if: github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -135,6 +138,7 @@ jobs:
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
       - name: Checkout
@@ -167,6 +171,7 @@ jobs:
   phpcs:
     name: PHPCS
     runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
       - name: Checkout
@@ -196,6 +201,7 @@ jobs:
   infection:
     name: Mutation Testing
     runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
       - name: Checkout
