@@ -52,8 +52,8 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: vendor
-          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
-          restore-keys: composer-${{ matrix.php }}-
+          key: v2-composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          restore-keys: v2-composer-${{ matrix.php }}-
 
       - name: Abhängigkeiten installieren
         run: composer install --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
@@ -75,6 +75,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          fetch-depth: 0  # SonarCloud benötigt vollständige Git-Historie
 
       - name: PHP 8.2 mit Xdebug einrichten
         uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2
@@ -88,14 +90,33 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: vendor
-          key: composer-8.2-${{ hashFiles('composer.json') }}
-          restore-keys: composer-8.2-
+          key: v2-composer-8.2-${{ hashFiles('composer.json') }}
+          restore-keys: v2-composer-8.2-
 
       - name: Abhängigkeiten installieren
         run: composer install --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
 
       - name: Tests mit Coverage ausführen
-        run: ./vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover coverage.xml
+        run: ./vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover coverage.xml --log-junit test-results.xml
+
+      - name: Coverage-Schwellenwert prüfen (min. 90% Lines)
+        run: |
+          php -r "
+            \$xml = simplexml_load_file('coverage.xml');
+            \$metrics = \$xml->xpath('//project/metrics');
+            if (empty(\$metrics)) { fwrite(STDERR, 'coverage.xml nicht parsebar' . PHP_EOL); exit(1); }
+            \$m      = \$metrics[0];
+            \$total  = (int)\$m['statements'];
+            \$covered = (int)\$m['coveredstatements'];
+            if (\$total === 0) { fwrite(STDERR, 'Keine Statements gefunden' . PHP_EOL); exit(1); }
+            \$pct = round((\$covered / \$total) * 100, 2);
+            echo 'Line-Coverage: ' . \$pct . '% (' . \$covered . '/' . \$total . ')' . PHP_EOL;
+            if (\$pct < 90.0) {
+              fwrite(STDERR, 'FEHLER: Coverage ' . \$pct . '% liegt unter dem Minimum von 90%' . PHP_EOL);
+              exit(1);
+            }
+            echo 'OK' . PHP_EOL;
+          "
 
       - name: Coverage zu Codecov hochladen
         uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5
@@ -103,6 +124,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
           fail_ci_if_error: false
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3
+        if: github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   phpstan:
     name: PHPStan
@@ -124,8 +152,8 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: vendor
-          key: composer-8.2-${{ hashFiles('composer.json') }}
-          restore-keys: composer-8.2-
+          key: v2-composer-8.2-${{ hashFiles('composer.json') }}
+          restore-keys: v2-composer-8.2-
 
       - name: Abhängigkeiten installieren
         run: composer install --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
@@ -156,8 +184,8 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: vendor
-          key: composer-8.2-${{ hashFiles('composer.json') }}
-          restore-keys: composer-8.2-
+          key: v2-composer-8.2-${{ hashFiles('composer.json') }}
+          restore-keys: v2-composer-8.2-
 
       - name: Abhängigkeiten installieren
         run: composer install --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
@@ -185,8 +213,8 @@ jobs:
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: vendor
-          key: composer-8.2-${{ hashFiles('composer.json') }}
-          restore-keys: composer-8.2-
+          key: v2-composer-8.2-${{ hashFiles('composer.json') }}
+          restore-keys: v2-composer-8.2-
 
       - name: Abhängigkeiten installieren
         run: composer install --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
