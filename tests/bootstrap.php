@@ -148,6 +148,8 @@ require_once __DIR__ . '/../includes/class-oidc-tokens.php';
 require_once __DIR__ . '/../includes/class-oidc-roles.php';
 require_once __DIR__ . '/../includes/class-oidc-token-exchange.php';
 require_once __DIR__ . '/../includes/class-oidc-user-manager.php';
+require_once __DIR__ . '/../includes/class-oidc-admin-fields.php';
+require_once __DIR__ . '/../includes/class-oidc-admin-sanitize.php';
 require_once __DIR__ . '/../includes/class-oidc-admin.php';
 require_once __DIR__ . '/../includes/class-oidc-auth.php';
 require_once __DIR__ . '/../includes/class-oidc-log.php';
