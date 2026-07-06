@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: WordPress Plugin Check ausführen
-        uses: wordpress/plugin-check-action@6f5a57e173c065a394b78688f75df543e4011902 # v1
+        uses: wordpress/plugin-check-action@98a1788320d0add90df2d8183934ecccbc4e05d2 # v1
         with:
           build-dir: './'
           exclude-directories: 'vendor,tests,.github,dist,bin'
