@@ -1,11 +1,12 @@
 <?php
 /**
- * Tests für OIDC_Admin – Sanitize-Callbacks und Field-Methoden.
+ * Tests für OIDC_Admin, OIDC_Admin_Fields und OIDC_Admin_Sanitize.
  *
  * UI-schwere Methoden (render_settings_page, register_settings, AJAX) werden
  * nicht getestet, da sie vollständig von der WordPress Settings-API / $wpdb
- * abhängen. Testbar sind: sanitize_*, field_text, field_url, field_password,
- * field_checkbox und der enqueue_scripts-Early-Return.
+ * abhängen. Testbar sind: sanitize_* (via $admin->sanitize), field_text,
+ * field_url, field_password, field_checkbox (via $admin->fields) und der
+ * enqueue_scripts-Early-Return.
  */
 
 require_once __DIR__ . '/WpTestCase.php';
@@ -13,6 +14,8 @@ require_once __DIR__ . '/WpTestCase.php';
 use Brain\Monkey\Functions;
 
 if ( ! class_exists( 'OIDC_Admin' ) ) {
+    require_once __DIR__ . '/../../includes/class-oidc-admin-fields.php';
+    require_once __DIR__ . '/../../includes/class-oidc-admin-sanitize.php';
     require_once __DIR__ . '/../../includes/class-oidc-admin.php';
 }
 
@@ -39,27 +42,27 @@ class AdminTest extends WpTestCase {
     // -------------------------------------------------------------------------
 
     public function test_sanitize_checkbox_string_one_returns_one() {
-        $this->assertSame( '1', $this->admin->sanitize_checkbox( '1' ) );
+        $this->assertSame( '1', $this->admin->sanitize->sanitize_checkbox( '1' ) );
     }
 
     public function test_sanitize_checkbox_bool_true_returns_one() {
-        $this->assertSame( '1', $this->admin->sanitize_checkbox( true ) );
+        $this->assertSame( '1', $this->admin->sanitize->sanitize_checkbox( true ) );
     }
 
     public function test_sanitize_checkbox_zero_returns_empty() {
-        $this->assertSame( '', $this->admin->sanitize_checkbox( '0' ) );
+        $this->assertSame( '', $this->admin->sanitize->sanitize_checkbox( '0' ) );
     }
 
     public function test_sanitize_checkbox_empty_returns_empty() {
-        $this->assertSame( '', $this->admin->sanitize_checkbox( '' ) );
+        $this->assertSame( '', $this->admin->sanitize->sanitize_checkbox( '' ) );
     }
 
     public function test_sanitize_checkbox_false_returns_empty() {
-        $this->assertSame( '', $this->admin->sanitize_checkbox( false ) );
+        $this->assertSame( '', $this->admin->sanitize->sanitize_checkbox( false ) );
     }
 
     public function test_sanitize_checkbox_arbitrary_string_returns_empty() {
-        $this->assertSame( '', $this->admin->sanitize_checkbox( 'yes' ) );
+        $this->assertSame( '', $this->admin->sanitize->sanitize_checkbox( 'yes' ) );
     }
 
     // -------------------------------------------------------------------------
@@ -68,31 +71,31 @@ class AdminTest extends WpTestCase {
 
     public function test_sanitize_secret_trims_whitespace() {
         Functions\when( 'wp_unslash' )->returnArg();
-        $result = $this->admin->sanitize_secret( '  mysecret  ' );
+        $result = $this->admin->sanitize->sanitize_secret( '  mysecret  ' );
         $this->assertSame( 'mysecret', $result );
     }
 
     public function test_sanitize_secret_removes_null_bytes() {
         Functions\when( 'wp_unslash' )->returnArg();
-        $result = $this->admin->sanitize_secret( "sec\x00ret" );
+        $result = $this->admin->sanitize->sanitize_secret( "sec\x00ret" );
         $this->assertSame( 'secret', $result );
     }
 
     public function test_sanitize_secret_multiple_null_bytes() {
         Functions\when( 'wp_unslash' )->returnArg();
-        $result = $this->admin->sanitize_secret( "\x00sec\x00\x00ret\x00" );
+        $result = $this->admin->sanitize->sanitize_secret( "\x00sec\x00\x00ret\x00" );
         $this->assertSame( 'secret', $result );
     }
 
     public function test_sanitize_secret_normal_value_unchanged() {
         Functions\when( 'wp_unslash' )->returnArg();
-        $result = $this->admin->sanitize_secret( 'abc123XYZ!@#' );
+        $result = $this->admin->sanitize->sanitize_secret( 'abc123XYZ!@#' );
         $this->assertSame( 'abc123XYZ!@#', $result );
     }
 
     public function test_sanitize_secret_empty_returns_empty() {
         Functions\when( 'wp_unslash' )->returnArg();
-        $result = $this->admin->sanitize_secret( '' );
+        $result = $this->admin->sanitize->sanitize_secret( '' );
         $this->assertSame( '', $result );
     }
 
@@ -101,12 +104,12 @@ class AdminTest extends WpTestCase {
     // -------------------------------------------------------------------------
 
     public function test_sanitize_role_mapping_empty_returns_empty() {
-        $this->assertSame( '', $this->admin->sanitize_role_mapping( '' ) );
+        $this->assertSame( '', $this->admin->sanitize->sanitize_role_mapping( '' ) );
     }
 
     public function test_sanitize_role_mapping_invalid_json_returns_empty() {
         Functions\when( 'wp_unslash' )->returnArg();
-        $result = $this->admin->sanitize_role_mapping( 'not-json' );
+        $result = $this->admin->sanitize->sanitize_role_mapping( 'not-json' );
         $this->assertSame( '', $result );
     }
 
@@ -116,7 +119,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 
         $input  = json_encode( array( 'editor-group' => 'editor', 'admin-group' => 'administrator' ) );
-        $result = $this->admin->sanitize_role_mapping( $input );
+        $result = $this->admin->sanitize->sanitize_role_mapping( $input );
         $decoded = json_decode( $result, true );
 
         $this->assertIsArray( $decoded );
@@ -126,7 +129,7 @@ class AdminTest extends WpTestCase {
 
     public function test_sanitize_role_mapping_non_array_json_returns_empty() {
         Functions\when( 'wp_unslash' )->returnArg();
-        $result = $this->admin->sanitize_role_mapping( '"just-a-string"' );
+        $result = $this->admin->sanitize->sanitize_role_mapping( '"just-a-string"' );
         $this->assertSame( '', $result );
     }
 
@@ -139,7 +142,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_attr' )->returnArg();
 
         ob_start();
-        $this->admin->field_text( array( 'option' => 'oidc_client_id' ) );
+        $this->admin->fields->field_text( array( 'option' => 'oidc_client_id' ) );
         $output = ob_get_clean();
 
         $this->assertStringContainsString( 'type="text"', $output );
@@ -153,7 +156,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_html' )->returnArg();
 
         ob_start();
-        $this->admin->field_text( array(
+        $this->admin->fields->field_text( array(
             'option'      => 'oidc_client_id',
             'description' => 'Meine Beschreibung',
         ) );
@@ -170,7 +173,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_attr' )->returnArg();
 
         ob_start();
-        $this->admin->field_text( array(
+        $this->admin->fields->field_text( array(
             'option'  => 'oidc_scopes',
             'default' => 'openid email profile',
         ) );
@@ -188,7 +191,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_attr' )->returnArg();
 
         ob_start();
-        $this->admin->field_url( array( 'option' => 'oidc_token_endpoint' ) );
+        $this->admin->fields->field_url( array( 'option' => 'oidc_token_endpoint' ) );
         $output = ob_get_clean();
 
         $this->assertStringContainsString( 'type="url"', $output );
@@ -205,7 +208,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_attr' )->returnArg();
 
         ob_start();
-        $this->admin->field_password( array( 'option' => 'oidc_client_secret' ) );
+        $this->admin->fields->field_password( array( 'option' => 'oidc_client_secret' ) );
         $output = ob_get_clean();
 
         $this->assertStringContainsString( 'type="password"', $output );
@@ -227,7 +230,7 @@ class AdminTest extends WpTestCase {
         } );
 
         ob_start();
-        $this->admin->field_checkbox( array( 'option' => 'oidc_create_user', 'description' => '' ) );
+        $this->admin->fields->field_checkbox( array( 'option' => 'oidc_create_user', 'description' => '' ) );
         $output = ob_get_clean();
 
         $this->assertStringContainsString( 'checked', $output );
@@ -243,7 +246,7 @@ class AdminTest extends WpTestCase {
         } );
 
         ob_start();
-        $this->admin->field_checkbox( array( 'option' => 'oidc_create_user', 'description' => '' ) );
+        $this->admin->fields->field_checkbox( array( 'option' => 'oidc_create_user', 'description' => '' ) );
         $output = ob_get_clean();
 
         $this->assertStringNotContainsString( 'checked', $output );
@@ -269,7 +272,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_html__' )->returnArg();
 
         ob_start();
-        $this->admin->section_provider_description();
+        $this->admin->fields->section_provider_description();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( '<p>', $output );
@@ -279,7 +282,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_html__' )->returnArg();
 
         ob_start();
-        $this->admin->section_roles_description();
+        $this->admin->fields->section_roles_description();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( '<p>', $output );
@@ -314,7 +317,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_html_e' )->justReturn( null );
 
         ob_start();
-        $this->admin->field_discovery_url();
+        $this->admin->fields->field_discovery_url();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( 'type="url"', $output );
@@ -333,7 +336,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'esc_html_e' )->justReturn( null );
 
         ob_start();
-        $this->admin->field_redirect_uri();
+        $this->admin->fields->field_redirect_uri();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( 'readonly', $output );
@@ -355,7 +358,7 @@ class AdminTest extends WpTestCase {
         } );
 
         ob_start();
-        $this->admin->field_token_auth_method();
+        $this->admin->fields->field_token_auth_method();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( '<select', $output );
@@ -377,7 +380,7 @@ class AdminTest extends WpTestCase {
         } );
 
         ob_start();
-        $this->admin->field_remember_me();
+        $this->admin->fields->field_remember_me();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( '<select', $output );
@@ -556,7 +559,7 @@ class AdminTest extends WpTestCase {
         Functions\when( 'wp_roles' )->justReturn( $wpRoles );
 
         ob_start();
-        $this->admin->field_roles_dropdown();
+        $this->admin->fields->field_roles_dropdown();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( '<select', $output );
@@ -656,7 +659,7 @@ class AdminTest extends WpTestCase {
         Functions\when( '__' )->returnArg();
 
         ob_start();
-        $this->admin->field_role_mapping();
+        $this->admin->fields->field_role_mapping();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( 'oidc-role-mapping-table', $output );
@@ -707,7 +710,7 @@ class AdminTest extends WpTestCase {
         Functions\when( '__' )->returnArg();
 
         ob_start();
-        $this->admin->field_role_mapping();
+        $this->admin->fields->field_role_mapping();
         $output = ob_get_clean();
 
         $this->assertStringContainsString( 'oidc-role-mapping-table', $output );

@@ -41,6 +41,8 @@ require_once OIDC_CLIENT_DIR . 'includes/class-oidc-token-exchange.php';
 require_once OIDC_CLIENT_DIR . 'includes/class-oidc-user-manager.php';
 require_once OIDC_CLIENT_DIR . 'includes/class-oidc-logout.php';
 require_once OIDC_CLIENT_DIR . 'includes/class-oidc-profile.php';
+require_once OIDC_CLIENT_DIR . 'includes/class-oidc-admin-fields.php';
+require_once OIDC_CLIENT_DIR . 'includes/class-oidc-admin-sanitize.php';
 require_once OIDC_CLIENT_DIR . 'includes/class-oidc-admin.php';
 require_once OIDC_CLIENT_DIR . 'includes/class-oidc-auth.php';
 require_once OIDC_CLIENT_DIR . 'includes/class-oidc-login.php';
