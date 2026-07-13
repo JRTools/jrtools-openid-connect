@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:  OIDC Client
- * Plugin URI:   https://github.com/johannesroesch/oidc-client
+ * Plugin URI:   https://github.com/JRTools/oidc-client
  * Description:  Ermöglicht die Anmeldung per OpenID Connect (Authorization Code Flow + PKCE). Unterstützt Token-Verschlüsselung, Rollen-Mapping, Session-Management, Frontchannel- und Backchannel-Logout sowie Account-Linking.
  * Version:      1.2.0
  * Author:       Johannes Rösch
