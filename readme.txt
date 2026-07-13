@@ -1,7 +1,7 @@
 === OIDC Client ===
 Contributors: johannesroesch
 Tags: openid-connect, oauth2, sso, authentication, login
-Requires at least: 5.9
+Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.1
 Stable tag: 1.2.0
@@ -65,6 +65,10 @@ Works out of the box with **Keycloak**, **Microsoft Entra ID (Azure AD)**, **Goo
 4. Save – the OIDC login button will appear on the WordPress login page immediately.
 
 == Frequently Asked Questions ==
+
+= Which WordPress versions are supported? =
+
+The plugin officially supports the last 4 WordPress minor versions. The currently supported range is listed in the `Requires at least` and `Tested up to` headers above. Older versions may work but are not tested and receive no support.
 
 = Which providers are supported? =
 
