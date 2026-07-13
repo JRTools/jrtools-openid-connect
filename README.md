@@ -18,6 +18,8 @@ OIDC Client ermöglicht die Anmeldung an WordPress über jeden standardkonformen
 
 Unterstützte Provider: **Keycloak**, **Microsoft Entra ID (Azure AD)**, **Google**, **Okta**, **Auth0**, **easyVerein** und alle weiteren standardkonformen Anbieter.
 
+Beim Login werden alle Standard-Claims gemäß OIDC Core 1.0 §5.1 automatisch auf WordPress-Profilfelder übertragen (Name, E-Mail, Profilbild, Sprache u.a.), sofern der Provider die Claims liefert.
+
 ## Dokumentation
 
 | Zielgruppe | Dokument |

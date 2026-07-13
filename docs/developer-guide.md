@@ -20,15 +20,20 @@ oidc-client/
 │   ├── admin-guide.md
 │   └── developer-guide.md           # Diese Datei
 ├── includes/
-│   ├── class-oidc-jwt-helper.php    # Statische JWT/JWKS-Hilfsmethoden
-│   ├── class-oidc-log.php           # Datenbanklog + Admin-Log-Seite
-│   ├── class-oidc-tokens.php        # Token-Speicherung, Refresh, Verschlüsselung
-│   ├── class-oidc-roles.php         # Rollen-Mapping-Logik
-│   ├── class-oidc-logout.php        # Frontchannel- + Backchannel-Logout
-│   ├── class-oidc-profile.php       # Account-Linking, E-Mail/Passwort-Sperre
-│   ├── class-oidc-admin.php         # Settings-API, Discovery-AJAX, Cache-AJAX
-│   ├── class-oidc-auth.php          # Authorization Code Flow, Callback, Session-Check
-│   └── class-oidc-login.php         # Login-Button, Fehlermeldung, Auto-Login
+│   ├── class-oidc-admin.php             # Settings-Seite (Koordination)
+│   ├── class-oidc-admin-fields.php      # Settings-Felder und -Registrierung
+│   ├── class-oidc-admin-sanitize.php    # Sanitierung der Settings-Eingaben
+│   ├── class-oidc-auth.php              # Authorization Code Flow, Callback, Session-Check
+│   ├── class-oidc-jwk-helper.php        # JWK-Parsing und PEM-Konvertierung
+│   ├── class-oidc-jwt-helper.php        # Statische JWT/JWKS-Hilfsmethoden
+│   ├── class-oidc-log.php               # Datenbanklog + Admin-Log-Seite
+│   ├── class-oidc-login.php             # Login-Button, Fehlermeldung, Auto-Login
+│   ├── class-oidc-logout.php            # Frontchannel- + Backchannel-Logout
+│   ├── class-oidc-profile.php           # Account-Linking, E-Mail/Passwort-Sperre
+│   ├── class-oidc-roles.php             # Rollen-Mapping-Logik
+│   ├── class-oidc-token-exchange.php    # Token-Endpoint-Kommunikation, Code-Austausch
+│   ├── class-oidc-tokens.php            # Token-Speicherung, Refresh, Verschlüsselung
+│   └── class-oidc-user-manager.php      # Benutzeranlage, Profil-Sync, Claims-Mapping
 ├── languages/
 │   ├── oidc-client.pot              # Übersetzungsvorlage
 │   ├── oidc-client-de_DE.po/.mo     # Deutsch
@@ -83,6 +88,18 @@ oidc-client/
 
 ### Klassen
 
+#### `OIDC_Admin` (`includes/class-oidc-admin.php`)
+
+Koordiniert die Settings-Seite: registriert AJAX-Handler für Discovery und JWKS-Cache-Leerung, bindet die Unterklassen ein.
+
+#### `OIDC_Admin_Fields` (`includes/class-oidc-admin-fields.php`)
+
+Registriert alle Settings-Felder und -Sektionen via WordPress Settings API. Kapselt die Darstellung der Einstellungsformulare.
+
+#### `OIDC_Admin_Sanitize` (`includes/class-oidc-admin-sanitize.php`)
+
+Sanitiert und validiert alle Eingaben beim Speichern der Settings. Enthält die Callback-Funktionen für `register_setting()`.
+
 #### `OIDC_JWT_Helper` (`includes/class-oidc-jwt-helper.php`)
 
 Statische Hilfsklasse für JWT-Verarbeitung und JWKS-Operationen.
@@ -121,6 +138,32 @@ Verwaltet Token-Speicherung, Refresh und optionale AES-256-CBC-Verschlüsselung.
 | `oidc_initiate_login` | `initiate_login($extra_params)` | Redirect zum Provider starten |
 | `init` | `check_session_validity()` | Session bei jedem Request prüfen |
 | `get_avatar_url` | `filter_avatar_url()` | OIDC-Profilbild einbinden |
+
+#### `OIDC_JWK_Helper` (`includes/class-oidc-jwk-helper.php`)
+
+Kapselt das JWK-Parsing und die Konvertierung von RSA-JWKs in PEM-Public-Keys. Wurde aus `OIDC_JWT_Helper` extrahiert, um die Verantwortlichkeiten zu trennen.
+
+| Methode | Beschreibung |
+|---|---|
+| `jwk_to_pem($jwk)` | RSA-JWK zu PEM-Public-Key konvertieren |
+
+#### `OIDC_Token_Exchange` (`includes/class-oidc-token-exchange.php`)
+
+Kapselt die gesamte Kommunikation mit dem Token-Endpoint des Providers (Code-Austausch und Token-Refresh). Wurde aus `OIDC_Auth` extrahiert.
+
+| Methode | Beschreibung |
+|---|---|
+| `exchange_code($code, $code_verifier)` | Authorization Code gegen Tokens tauschen |
+| `refresh_tokens($refresh_token)` | Neues Access-Token per Refresh-Token anfordern |
+
+#### `OIDC_UserManager` (`includes/class-oidc-user-manager.php`)
+
+Verwaltet die Benutzeranlage und den Profil-Sync. Übernimmt das Mapping aller OIDC Standard-Claims (§5.1) auf WordPress-Profilfelder. Wurde aus `OIDC_Auth` extrahiert.
+
+| Methode | Beschreibung |
+|---|---|
+| `find_or_create_user($userinfo)` | Vorhandenen Benutzer suchen oder neuen anlegen |
+| `sync_user_profile($user_id, $userinfo)` | Alle verfügbaren Claims auf WP-Felder und User-Meta übertragen |
 
 ---
 
@@ -164,6 +207,8 @@ Alle Optionen sind über `get_option()` / `update_option()` zugänglich:
 
 ## User-Meta-Keys
 
+### Plugin-spezifische Schlüssel (`_oidc_*`)
+
 | Meta-Key | Typ | Beschreibung |
 |---|---|---|
 | `_oidc_subject` | String | `sub`-Claim des Providers – eindeutige Kennung |
@@ -171,7 +216,24 @@ Alle Optionen sind über `get_option()` / `update_option()` zugänglich:
 | `_oidc_access_token` | String | Access-Token (ggf. verschlüsselt) |
 | `_oidc_access_token_expires` | int | Unix-Timestamp des Token-Ablaufs |
 | `_oidc_refresh_token` | String | Refresh-Token (ggf. verschlüsselt) |
-| `_oidc_avatar_url` | String | URL des Profilbilds vom Provider |
+| `_oidc_avatar_url` | String | URL des Profilbilds vom Provider (`picture`-Claim) |
+| `_oidc_middle_name` | String | Zweiter Vorname (`middle_name`-Claim) |
+| `_oidc_profile` | String | Profilseiten-URL beim Provider (`profile`-Claim) |
+| `_oidc_gender` | String | Geschlecht (`gender`-Claim) |
+| `_oidc_birthdate` | String | Geburtsdatum im Format `YYYY-MM-DD` (`birthdate`-Claim) |
+| `_oidc_zoneinfo` | String | Zeitzone, z.B. `Europe/Berlin` (`zoneinfo`-Claim) |
+| `_oidc_phone_number` | String | Telefonnummer (`phone_number`-Claim) |
+| `_oidc_phone_number_verified` | String | Telefonnummer bestätigt (`phone_number_verified`-Claim) |
+| `_oidc_email_verified` | String | E-Mail bestätigt (`email_verified`-Claim) |
+| `_oidc_updated_at` | String | Zeitpunkt der letzten Profiländerung, Unix-Timestamp (`updated_at`-Claim) |
+| `_oidc_address` | String | Adressobjekt, JSON-kodiert (`address`-Claim) |
+
+### Native WordPress-Schlüssel (vom Plugin beschrieben)
+
+| OIDC-Claim | Meta-Key | Beschreibung |
+|---|---|---|
+| `nickname` | `nickname` | Anzeigenickname |
+| `locale` | `locale` | Benutzersprache (z.B. `de_DE`) |
 
 ---
 
@@ -257,6 +319,8 @@ vendor/bin/phpunit --coverage-html coverage/
 
 ### Test-Klassen
 
+Der Test-Suite umfasst aktuell **278 Tests**.
+
 | Datei | Testet | Schwerpunkt |
 |---|---|---|
 | `JwtHelperTest.php` | `OIDC_JWT_Helper` | base64url-Dekodierung, JWT-Parsing, DER-Encoding, JWK→PEM |
@@ -298,7 +362,23 @@ OIDC_Auth::some_method();
 vendor/bin/infection --no-progress
 ```
 
-Konfiguration in `infection.json5`: Mindest-MSI 70%, mindest-Covered-MSI 80%.
+Konfiguration in `infection.json5`: Mindest-MSI 70%, mindest-Covered-MSI 80%. Mutation Testing läuft im CI auf PHP 8.4.
+
+---
+
+## CI / Quality Gates
+
+Der GitHub Actions Workflow prüft bei jedem Push und Pull Request:
+
+| Gate | Tool | Schwellenwert |
+|---|---|---|
+| Unit-Tests | PHPUnit (PHP 8.1, 8.2, 8.3, 8.4) | Alle 278 Tests grün |
+| Code Coverage | Codecov | ≥ 90 % Zeilenabdeckung |
+| Code Style | PHPCS (WordPress Coding Standards) | Keine Fehler |
+| Statische Analyse | PHPStan Level 5 | Keine Fehler |
+| Mutation Testing | Infection (PHP 8.4) | MSI ≥ 70 %, Covered MSI ≥ 80 % |
+| Quality Gate | SonarCloud | Muss „Passed" sein |
+| Plugin-Kompatibilität | WordPress Plugin Check | Keine Blocking Issues |
 
 ---
 
