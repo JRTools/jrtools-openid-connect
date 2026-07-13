@@ -45,10 +45,10 @@ jobs:
 
       - name: Snapshot-ZIP erstellen
         run: |
-          SNAPSHOT_NAME="oidc-client-SNAPSHOT"
+          SNAPSHOT_NAME="jrtools-openid-connect-SNAPSHOT"
           mkdir -p dist
           zip -r "dist/${SNAPSHOT_NAME}.zip" . \
-            --include "oidc-client.php" \
+            --include "jrtools-openid-connect.php" \
             --include "readme.txt" \
             --include "includes/*" \
             --include "assets/*" \
@@ -78,7 +78,7 @@ jobs:
           RELEASE_ID: ${{ steps.draft.outputs.RELEASE_ID }}
         run: |
           OLD_ASSET_ID=$(gh api "repos/${{ github.repository }}/releases/${RELEASE_ID}/assets" \
-            --jq '[.[] | select(.name == "oidc-client-SNAPSHOT.zip")] | first | .id')
+            --jq '[.[] | select(.name == "jrtools-openid-connect-SNAPSHOT.zip")] | first | .id')
           if [ -n "$OLD_ASSET_ID" ] && [ "$OLD_ASSET_ID" != "null" ]; then
             gh api --method DELETE "repos/${{ github.repository }}/releases/assets/${OLD_ASSET_ID}"
             echo "Alter Snapshot-Asset gelöscht (ID: ${OLD_ASSET_ID})"
