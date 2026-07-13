@@ -73,11 +73,13 @@ class OIDC_User_Manager {
             }
 
             // Benutzernamen aus preferred_username, nickname oder E-Mail ableiten
-            $raw_username = isset( $userinfo['preferred_username'] )
-                ? $userinfo['preferred_username']
-                : ( isset( $userinfo['nickname'] )
-                    ? $userinfo['nickname']
-                    : strstr( $email, '@', true ) );
+            if ( isset( $userinfo['preferred_username'] ) ) {
+                $raw_username = $userinfo['preferred_username'];
+            } elseif ( isset( $userinfo['nickname'] ) ) {
+                $raw_username = $userinfo['nickname'];
+            } else {
+                $raw_username = strstr( $email, '@', true );
+            }
             $username = sanitize_user( $raw_username, true );
 
             // Eindeutigkeit sicherstellen
