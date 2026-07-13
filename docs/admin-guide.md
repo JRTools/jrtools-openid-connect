@@ -397,6 +397,56 @@ Der REST-Endpunkt ist öffentlich zugänglich (kein WordPress-Auth), da er vom P
 
 ---
 
+## OIDC Standard-Claims Mapping
+
+Bei jedem Login überträgt das Plugin alle Standard-Claims gemäß **OIDC Core 1.0 §5.1** auf das WordPress-Benutzerkonto — jedoch nur, wenn der Provider den jeweiligen Claim tatsächlich liefert. Fehlende Claims werden ignoriert; vorhandene Werte werden bei jedem Login aktualisiert.
+
+### Was muss der Provider senden?
+
+Damit alle Felder befüllt werden, sollte der Provider mindestens die Scopes **`openid email profile`** gewähren und die entsprechenden Claims im ID-Token oder über den Userinfo-Endpoint liefern.
+
+### Wohin landen die Claims in WordPress?
+
+#### Tabelle `wp_users` (Kerndaten)
+
+| OIDC-Claim | WordPress-Spalte | Hinweis |
+|---|---|---|
+| `email` | `user_email` | Bei jedem Login aktualisiert |
+| `given_name` | `first_name` | Vorname |
+| `family_name` | `last_name` | Nachname |
+| `name` | `display_name` | Anzeigename |
+| `website` | `user_url` | Profilwebseite |
+| `nickname` | `user_nicename` | URL-freundlicher Kurzname |
+| `preferred_username` | `user_login` | Nur beim Anlegen neuer Konten; Fallback-Kette: `preferred_username` → `nickname` → E-Mail-Präfix |
+
+#### Tabelle `wp_usermeta` (native WordPress-Schlüssel)
+
+| OIDC-Claim | Meta-Key | Hinweis |
+|---|---|---|
+| `nickname` | `nickname` | Anzeigenickname im Profil |
+| `locale` | `locale` | Stellt die WordPress-Benutzersprache ein (z.B. `de_DE`) |
+
+#### Tabelle `wp_usermeta` (plugin-spezifische Schlüssel)
+
+| OIDC-Claim | Meta-Key | Hinweis |
+|---|---|---|
+| `sub` | `_oidc_subject` | Eindeutige Benutzerkennung des Providers |
+| `picture` | `_oidc_avatar_url` | Nur wenn „Profilbild synchronisieren" aktiv |
+| `middle_name` | `_oidc_middle_name` | Zweiter Vorname |
+| `profile` | `_oidc_profile` | Profilseite beim Provider |
+| `gender` | `_oidc_gender` | Geschlecht |
+| `birthdate` | `_oidc_birthdate` | Geburtsdatum (Format: `YYYY-MM-DD`) |
+| `zoneinfo` | `_oidc_zoneinfo` | Zeitzone (z.B. `Europe/Berlin`) |
+| `phone_number` | `_oidc_phone_number` | Telefonnummer |
+| `phone_number_verified` | `_oidc_phone_number_verified` | Telefonnummer bestätigt (`true`/`false`) |
+| `email_verified` | `_oidc_email_verified` | E-Mail bestätigt (`true`/`false`) |
+| `updated_at` | `_oidc_updated_at` | Zeitpunkt der letzten Profiländerung (Unix-Timestamp) |
+| `address` | `_oidc_address` | Adressobjekt, JSON-kodiert |
+
+> **Hinweis:** Die `_oidc_*`-Metafelder sind nicht standardmäßig in der WordPress-Profiloberfläche sichtbar. Sie können von Themes und Plugins über die üblichen `get_user_meta()`-Aufrufe abgefragt werden.
+
+---
+
 ## Datenbankschema
 
 Das Plugin legt beim Aktivieren eine Tabelle für das Login-Log an:

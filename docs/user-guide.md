@@ -60,6 +60,20 @@ Je nach Konfiguration der Website können OIDC-verknüpfte Konten möglicherweis
 
 ---
 
+## Profildaten vom Provider
+
+Beim Anmelden überträgt das Plugin Profilinformationen aus deinem Provider-Konto automatisch in dein WordPress-Profil. Welche Daten übernommen werden, hängt davon ab, was dein Provider zurücksendet. Typischerweise werden übertragen:
+
+- Vor- und Nachname
+- Anzeigename
+- E-Mail-Adresse
+- Profilbild (wenn die Option „Profilbild synchronisieren" aktiviert ist)
+- Sprache (stellt die WordPress-Oberfläche auf deine beim Provider hinterlegte Sprache ein)
+
+Diese Daten werden bei jeder Anmeldung aktualisiert. Möchtest du deine Angaben ändern, musst du dies beim Provider vornehmen – beim nächsten Login werden die aktualisierten Werte übernommen.
+
+---
+
 ## Sitzung abgelaufen
 
 Falls du während der Nutzung der Website ausgeloggt wirst und die Meldung „Sitzung abgelaufen. Bitte erneut anmelden." erscheint: Das ist normal – deine Anmeldung beim Provider ist abgelaufen. Melde dich einfach erneut über den Login-Button an.
