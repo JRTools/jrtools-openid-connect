@@ -101,5 +101,5 @@ When updating the matrix, these files must stay in sync:
 
 ## External services
 
-- SonarCloud: https://sonarcloud.io/project/overview?id=johannesroesch_oidc-client
-- Codecov: https://app.codecov.io/gh/johannesroesch/oidc-client
+- SonarCloud: https://sonarcloud.io/project/overview?id=JRTools_oidc-client
+- Codecov: https://app.codecov.io/gh/JRTools/oidc-client

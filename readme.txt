@@ -52,7 +52,7 @@ Works out of the box with **Keycloak**, **Microsoft Entra ID (Azure AD)**, **Goo
 
 = Manual Installation =
 
-1. Download the latest `oidc-client-x.y.z.zip` from the [releases page](https://github.com/johannesroesch/oidc-client/releases).
+1. Download the latest `oidc-client-x.y.z.zip` from the [releases page](https://github.com/JRTools/oidc-client/releases).
 2. Go to **Plugins → Add New → Upload Plugin**.
 3. Select the ZIP file and click **Install Now**.
 4. Activate the plugin.

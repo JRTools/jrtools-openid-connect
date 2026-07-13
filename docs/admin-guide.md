@@ -21,7 +21,7 @@ Dieses Handbuch richtet sich an WordPress-Administratoren, die das Plugin instal
 
 ### Variante A: ZIP hochladen (empfohlen)
 
-1. Die neueste `oidc-client-x.y.z.zip` von der [Releases-Seite](https://github.com/johannesroesch/oidc-client/releases) herunterladen.
+1. Die neueste `oidc-client-x.y.z.zip` von der [Releases-Seite](https://github.com/JRTools/oidc-client/releases) herunterladen.
 2. Im WordPress-Admin zu **Plugins → Neu hinzufügen → Plugin hochladen** navigieren.
 3. Die ZIP-Datei auswählen und auf **Jetzt installieren** klicken.
 4. Plugin aktivieren.
