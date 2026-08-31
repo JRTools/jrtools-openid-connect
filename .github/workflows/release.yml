@@ -18,7 +18,7 @@ permissions: {}
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  WP_TESTED_UP_TO: '7.0'
+  WP_TESTED_UP_TO: '7.1'
   WP_REQUIRES_AT_LEAST: '6.7'
 
 jobs:
