@@ -45,12 +45,13 @@ if ( ! class_exists( 'WP_Error' ) ) {
 // WP_User Stub
 if ( ! class_exists( 'WP_User' ) ) {
     class WP_User {
-        public $ID   = 0;
+        public $ID          = 0;
         public $data;
-        public $roles        = array();
-        public $user_email   = '';
-        private $set_role_calls  = array();
-        private $add_role_calls  = array();
+        public $roles       = array();
+        public $user_email  = '';
+        public $user_login  = '';
+        private $set_role_calls = array();
+        private $add_role_calls = array();
 
         public function set_role( $role ) {
             $this->set_role_calls[] = $role;
