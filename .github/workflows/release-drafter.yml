@@ -35,13 +35,13 @@ jobs:
       - name: PHP einrichten
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
-          php-version: '8.2'
+          php-version: '8.4'
           extensions: openssl, mbstring, json
           coverage: none
           tools: composer:v2
 
       - name: Produktiv-Abhängigkeiten installieren
-        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
       - name: Snapshot-ZIP erstellen
         run: |
