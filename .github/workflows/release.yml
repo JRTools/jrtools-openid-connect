@@ -157,7 +157,7 @@ jobs:
           sed -i "s/^define( 'OIDC_EXPECTED_VERSION', '[^']*' );/define( 'OIDC_EXPECTED_VERSION', '${VERSION}' );/" tests/Unit/PluginMainTest.php
 
       - name: Produktiv-Abhängigkeiten installieren
-        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
       - name: Plugin-ZIP erstellen
         env:
