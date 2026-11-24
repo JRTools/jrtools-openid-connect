@@ -3,7 +3,7 @@ Contributors: johannesroesch
 Tags: openid-connect, oauth2, sso, authentication, login
 Requires at least: 6.7
 Tested up to: 7.1
-Requires PHP: 8.1
+Requires PHP: 8.4
 Stable tag: 1.2.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -38,7 +38,7 @@ Works out of the box with **Keycloak**, **Microsoft Entra ID (Azure AD)**, **Goo
 
 = Requirements =
 
-* PHP 8.1 or higher with the `openssl` extension
+* PHP 8.4 or higher with the `openssl` extension
 * WordPress 5.9 or higher
 * An OIDC provider that supports Authorization Code Flow
 
